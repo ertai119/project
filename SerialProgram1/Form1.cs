@@ -82,7 +82,7 @@ namespace SerialProgram
             serialPort1.Read(buffer, 0, bytes);
             this.Invoke(new MethodInvoker(delegate
                 {
-                    textBox2.Text += Rs232Utils.ByteArrayToHexString(buffer)+" ";
+                    RecvTextBox.Text += Rs232Utils.ByteArrayToHexString(buffer)+" ";
 
                 }));
            
@@ -113,16 +113,15 @@ namespace SerialProgram
             chart1.Series[0].Points.AddXY(100, 100);
             chart1.Series[0].IsValueShownAsLabel = true;
             chart1.Legends[0].Enabled = true;
-
+            /*
             chart1.Series[1].Points.AddXY(1, 1);
             chart1.Series[1].Points.AddXY(1, 1);
             chart1.Series[1].IsValueShownAsLabel = true;
-
-            /*chart1.Series[1].Points.AddXY(100, 100);
-            chart1.Series[1].IsValueShownAsLabel = true;
-            chart1.Legends[1].Enabled = false;     */       
-
+    */
             chart1.Invalidate();
+
+            string [] row = {"1200", "3.175", "23.0", "7.1"};
+            dataGridView1.Rows.Add(row);
         }
 
     }
