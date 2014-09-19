@@ -9,7 +9,5 @@ namespace SerialProgram
     {
         void Update() {}
 
-        //private Int32 _index;
     }
-
 }

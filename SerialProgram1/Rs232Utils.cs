@@ -8,6 +8,9 @@ namespace SerialProgram
 {
     public class Rs232Utils
     {
+        static public byte STX = 0xFF;
+        static public byte ETX = 0xFE;
+
         private static char[] WhiteSpace = new char[] { ' ', '\n', '\r', '\t' };
         /// <summary>
         /// portname-baudrate-databit-parity-stopbit-flowcontrol 순

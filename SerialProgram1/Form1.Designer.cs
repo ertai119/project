@@ -41,7 +41,6 @@
             this.label2 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
-            this.serialPort2 = new System.IO.Ports.SerialPort(this.components);
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.lblMsg = new System.Windows.Forms.ToolStripStatusLabel();
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
@@ -143,7 +142,7 @@
             this.lblMsg});
             this.statusStrip1.Location = new System.Drawing.Point(0, 518);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(613, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(614, 22);
             this.statusStrip1.TabIndex = 0;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -151,7 +150,7 @@
             // 
             this.lblMsg.Name = "lblMsg";
             this.lblMsg.Size = new System.Drawing.Size(165, 17);
-            this.lblMsg.Text = "Com port testring program....";
+            this.lblMsg.Text = "Com port testing program....";
             // 
             // chart1
             // 
@@ -208,7 +207,8 @@
             this.SendTextBox.Multiline = true;
             this.SendTextBox.Name = "SendTextBox";
             this.SendTextBox.ReadOnly = true;
-            this.SendTextBox.Size = new System.Drawing.Size(440, 96);
+            this.SendTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.SendTextBox.Size = new System.Drawing.Size(439, 96);
             this.SendTextBox.TabIndex = 1;
             // 
             // RecvTextBox
@@ -220,7 +220,8 @@
             this.RecvTextBox.Multiline = true;
             this.RecvTextBox.Name = "RecvTextBox";
             this.RecvTextBox.ReadOnly = true;
-            this.RecvTextBox.Size = new System.Drawing.Size(440, 96);
+            this.RecvTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.RecvTextBox.Size = new System.Drawing.Size(439, 96);
             this.RecvTextBox.TabIndex = 3;
             // 
             // splitContainer1
@@ -241,7 +242,7 @@
             this.splitContainer1.Panel2.Controls.Add(this.chart1);
             this.splitContainer1.Panel2.Controls.Add(this.statusStrip1);
             this.splitContainer1.Size = new System.Drawing.Size(1083, 540);
-            this.splitContainer1.SplitterDistance = 466;
+            this.splitContainer1.SplitterDistance = 465;
             this.splitContainer1.TabIndex = 1;
             // 
             // dataGridView1
@@ -319,7 +320,6 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.ToolStripButton toolStripButton1;
         private System.IO.Ports.SerialPort serialPort1;
-        private System.IO.Ports.SerialPort serialPort2;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel lblMsg;
         private System.Windows.Forms.DataVisualization.Charting.Chart chart1;
