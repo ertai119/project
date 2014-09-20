@@ -11,6 +11,12 @@ namespace SerialProgram
         static public byte STX = 0xFF;
         static public byte ETX = 0xFE;
 
+        static public byte RECV_ETX = 63;
+
+        private DateTime startTime { get; set; }
+        private DateTime endTime { get; set; }
+        private int delay { get; set; }
+
         private static char[] WhiteSpace = new char[] { ' ', '\n', '\r', '\t' };
         /// <summary>
         /// portname-baudrate-databit-parity-stopbit-flowcontrol 순
@@ -164,6 +170,16 @@ namespace SerialProgram
                 sb.AppendFormat("{0} ", ByteToHex(b));
             }
             return sb.ToString().TrimEnd();
+        }
+        static public string ByteToString(byte[] strByte)
+        {
+            string str = Encoding.Default.GetString(strByte);
+            return str;
+        }
+        static public byte[] StringToByte(string str)
+        {
+            byte[] StrByte = Encoding.ASCII.GetBytes(str);
+            return StrByte;
         }
     }
 }
