@@ -29,51 +29,46 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea13 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend13 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series13 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea14 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend14 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series14 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea15 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend15 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series15 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea16 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend16 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series16 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea17 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend17 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series17 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea18 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend18 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series18 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.lblPortDesc = new System.Windows.Forms.ToolStripLabel();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.btnOpenClose = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend5 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea6 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend6 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series6 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
             this.label2 = new System.Windows.Forms.Label();
             this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.lblMsg = new System.Windows.Forms.ToolStripStatusLabel();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.textBoxDelay = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.dateTimePickerEnd = new System.Windows.Forms.DateTimePicker();
             this.label1 = new System.Windows.Forms.Label();
-            this.comboBoxTimer = new System.Windows.Forms.ComboBox();
-            this.btnSend = new System.Windows.Forms.Button();
+            this.btnStart = new System.Windows.Forms.Button();
             this.SendTextBox = new System.Windows.Forms.TextBox();
             this.RecvTextBox = new System.Windows.Forms.TextBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.buttonViewer = new System.Windows.Forms.Button();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.chartAmp = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.chartVolt = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.chartOxgen = new System.Windows.Forms.DataVisualization.Charting.Chart();
@@ -87,9 +82,15 @@
             this.radioButtonPH = new System.Windows.Forms.RadioButton();
             this.radioButtonTemperature = new System.Windows.Forms.RadioButton();
             this.radioButtonAmp = new System.Windows.Forms.RadioButton();
-            this.buttonSaveToFile = new System.Windows.Forms.Button();
-            this.buttonViewer = new System.Windows.Forms.Button();
-            this.toolStrip1.SuspendLayout();
+            this.textBoxTarget = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.statusStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -105,53 +106,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.chartTemperature)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // toolStrip1
-            // 
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.lblPortDesc,
-            this.toolStripSeparator1,
-            this.btnOpenClose,
-            this.toolStripButton1});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1417, 25);
-            this.toolStrip1.TabIndex = 0;
-            this.toolStrip1.Text = "toolStrip1";
-            // 
-            // lblPortDesc
-            // 
-            this.lblPortDesc.Name = "lblPortDesc";
-            this.lblPortDesc.Size = new System.Drawing.Size(68, 22);
-            this.lblPortDesc.Text = "lblPortDesc";
-            this.lblPortDesc.Click += new System.EventHandler(this.lblPortDesc_Click);
-            this.lblPortDesc.MouseLeave += new System.EventHandler(this.MessageNone);
-            this.lblPortDesc.MouseHover += new System.EventHandler(this.lblPortDesc_MouseHover);
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
-            // 
-            // btnOpenClose
-            // 
-            this.btnOpenClose.Checked = true;
-            this.btnOpenClose.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.btnOpenClose.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.btnOpenClose.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnOpenClose.Name = "btnOpenClose";
-            this.btnOpenClose.Size = new System.Drawing.Size(87, 22);
-            this.btnOpenClose.Text = "통신포트 열기";
-            this.btnOpenClose.Click += new System.EventHandler(this.btnOpenClose_Click);
-            // 
-            // toolStripButton1
-            // 
-            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
-            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton1.Text = "toolStripButton1";
             // 
             // label2
             // 
@@ -170,7 +124,7 @@
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.lblMsg});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 560);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 585);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(668, 22);
             this.statusStrip1.TabIndex = 0;
@@ -184,20 +138,32 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.textBoxTarget);
+            this.panel1.Controls.Add(this.label3);
+            this.panel1.Controls.Add(this.textBoxDelay);
             this.panel1.Controls.Add(this.label5);
             this.panel1.Controls.Add(this.dateTimePickerEnd);
             this.panel1.Controls.Add(this.label1);
-            this.panel1.Controls.Add(this.comboBoxTimer);
-            this.panel1.Controls.Add(this.btnSend);
+            this.panel1.Controls.Add(this.btnStart);
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(450, 89);
             this.panel1.TabIndex = 0;
             // 
+            // textBoxDelay
+            // 
+            this.textBoxDelay.Enabled = false;
+            this.textBoxDelay.Location = new System.Drawing.Point(285, 41);
+            this.textBoxDelay.MaxLength = 3;
+            this.textBoxDelay.Name = "textBoxDelay";
+            this.textBoxDelay.Size = new System.Drawing.Size(34, 21);
+            this.textBoxDelay.TabIndex = 11;
+            this.textBoxDelay.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxDelay_KeyPress);
+            // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(191, 50);
+            this.label5.Location = new System.Drawing.Point(191, 71);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(53, 12);
             this.label5.TabIndex = 10;
@@ -206,7 +172,8 @@
             // 
             // dateTimePickerEnd
             // 
-            this.dateTimePickerEnd.Location = new System.Drawing.Point(247, 44);
+            this.dateTimePickerEnd.Enabled = false;
+            this.dateTimePickerEnd.Location = new System.Drawing.Point(247, 65);
             this.dateTimePickerEnd.Name = "dateTimePickerEnd";
             this.dateTimePickerEnd.Size = new System.Drawing.Size(200, 21);
             this.dateTimePickerEnd.TabIndex = 7;
@@ -215,36 +182,22 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(251, 22);
+            this.label1.Location = new System.Drawing.Point(192, 46);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(69, 12);
+            this.label1.Size = new System.Drawing.Size(91, 12);
             this.label1.TabIndex = 10;
-            this.label1.Text = "데이터 주기";
+            this.label1.Text = "데이터 주기(분)";
             this.label1.TextAlign = System.Drawing.ContentAlignment.BottomRight;
             // 
-            // comboBoxTimer
+            // btnStart
             // 
-            this.comboBoxTimer.FormattingEnabled = true;
-            this.comboBoxTimer.Items.AddRange(new object[] {
-            "30분",
-            "1시간",
-            "Test용"});
-            this.comboBoxTimer.Location = new System.Drawing.Point(326, 18);
-            this.comboBoxTimer.Name = "comboBoxTimer";
-            this.comboBoxTimer.Size = new System.Drawing.Size(121, 20);
-            this.comboBoxTimer.TabIndex = 2;
-            this.comboBoxTimer.SelectedIndexChanged += new System.EventHandler(this.comboBoxTimer_SelectedIndexChanged);
-            // 
-            // btnSend
-            // 
-            this.btnSend.Enabled = false;
-            this.btnSend.Location = new System.Drawing.Point(6, 8);
-            this.btnSend.Name = "btnSend";
-            this.btnSend.Size = new System.Drawing.Size(176, 76);
-            this.btnSend.TabIndex = 1;
-            this.btnSend.Text = "Not Connected";
-            this.btnSend.UseVisualStyleBackColor = true;
-            this.btnSend.Click += new System.EventHandler(this.btnSend_Click);
+            this.btnStart.Location = new System.Drawing.Point(6, 8);
+            this.btnStart.Name = "btnStart";
+            this.btnStart.Size = new System.Drawing.Size(176, 76);
+            this.btnStart.TabIndex = 1;
+            this.btnStart.Text = "Not Connected";
+            this.btnStart.UseVisualStyleBackColor = true;
+            this.btnStart.Click += new System.EventHandler(this.btnStart_Click);
             // 
             // SendTextBox
             // 
@@ -256,7 +209,7 @@
             this.SendTextBox.Name = "SendTextBox";
             this.SendTextBox.ReadOnly = true;
             this.SendTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.SendTextBox.Size = new System.Drawing.Size(404, 101);
+            this.SendTextBox.Size = new System.Drawing.Size(304, 66);
             this.SendTextBox.TabIndex = 1;
             // 
             // RecvTextBox
@@ -264,25 +217,24 @@
             this.RecvTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.RecvTextBox.Location = new System.Drawing.Point(411, 457);
+            this.RecvTextBox.Location = new System.Drawing.Point(326, 454);
             this.RecvTextBox.Multiline = true;
             this.RecvTextBox.Name = "RecvTextBox";
             this.RecvTextBox.ReadOnly = true;
             this.RecvTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.RecvTextBox.Size = new System.Drawing.Size(327, 101);
+            this.RecvTextBox.Size = new System.Drawing.Size(402, 69);
             this.RecvTextBox.TabIndex = 3;
             // 
             // splitContainer1
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 25);
+            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
             // 
             this.splitContainer1.Panel1.Controls.Add(this.buttonViewer);
             this.splitContainer1.Panel1.Controls.Add(this.dataGridView1);
-            this.splitContainer1.Panel1.Controls.Add(this.buttonSaveToFile);
             this.splitContainer1.Panel1.Controls.Add(this.RecvTextBox);
             this.splitContainer1.Panel1.Controls.Add(this.panel1);
             this.splitContainer1.Panel1.Controls.Add(this.SendTextBox);
@@ -297,9 +249,19 @@
             this.splitContainer1.Panel2.Controls.Add(this.chartTemperature);
             this.splitContainer1.Panel2.Controls.Add(this.groupBox1);
             this.splitContainer1.Panel2.Controls.Add(this.statusStrip1);
-            this.splitContainer1.Size = new System.Drawing.Size(1417, 582);
+            this.splitContainer1.Size = new System.Drawing.Size(1417, 607);
             this.splitContainer1.SplitterDistance = 745;
             this.splitContainer1.TabIndex = 1;
+            // 
+            // buttonViewer
+            // 
+            this.buttonViewer.Location = new System.Drawing.Point(604, 17);
+            this.buttonViewer.Name = "buttonViewer";
+            this.buttonViewer.Size = new System.Drawing.Size(100, 70);
+            this.buttonViewer.TabIndex = 5;
+            this.buttonViewer.Text = "뷰어열기";
+            this.buttonViewer.UseVisualStyleBackColor = true;
+            this.buttonViewer.Click += new System.EventHandler(this.buttonLoadFile_Click);
             // 
             // dataGridView1
             // 
@@ -318,140 +280,104 @@
             this.dataGridView1.Size = new System.Drawing.Size(743, 344);
             this.dataGridView1.TabIndex = 4;
             // 
-            // Column1
-            // 
-            this.Column1.HeaderText = "기록시간";
-            this.Column1.Name = "Column1";
-            // 
-            // Column4
-            // 
-            this.Column4.HeaderText = "온도";
-            this.Column4.Name = "Column4";
-            // 
-            // Column5
-            // 
-            this.Column5.HeaderText = "pH농도";
-            this.Column5.Name = "Column5";
-            // 
-            // Column2
-            // 
-            this.Column2.HeaderText = "염도";
-            this.Column2.Name = "Column2";
-            // 
-            // Column3
-            // 
-            this.Column3.HeaderText = "용존 산소량";
-            this.Column3.Name = "Column3";
-            // 
-            // Column6
-            // 
-            this.Column6.HeaderText = "음극전위";
-            this.Column6.Name = "Column6";
-            // 
-            // Column7
-            // 
-            this.Column7.HeaderText = "양극전류";
-            this.Column7.Name = "Column7";
-            this.Column7.ReadOnly = true;
-            // 
             // chartAmp
             // 
-            chartArea13.Name = "ChartArea1";
-            this.chartAmp.ChartAreas.Add(chartArea13);
-            legend13.Name = "Legend1";
-            this.chartAmp.Legends.Add(legend13);
+            chartArea1.Name = "ChartArea1";
+            this.chartAmp.ChartAreas.Add(chartArea1);
+            legend1.Name = "Legend1";
+            this.chartAmp.Legends.Add(legend1);
             this.chartAmp.Location = new System.Drawing.Point(0, 0);
             this.chartAmp.Name = "chartAmp";
-            series13.ChartArea = "ChartArea1";
-            series13.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series13.Legend = "Legend1";
-            series13.Name = "양극전류";
-            this.chartAmp.Series.Add(series13);
+            series1.ChartArea = "ChartArea1";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series1.Legend = "Legend1";
+            series1.Name = "양극전류";
+            this.chartAmp.Series.Add(series1);
             this.chartAmp.Size = new System.Drawing.Size(628, 498);
             this.chartAmp.TabIndex = 12;
             this.chartAmp.Text = "양극전류";
             // 
             // chartVolt
             // 
-            chartArea14.Name = "ChartArea1";
-            this.chartVolt.ChartAreas.Add(chartArea14);
-            legend14.Name = "Legend1";
-            this.chartVolt.Legends.Add(legend14);
+            chartArea2.Name = "ChartArea1";
+            this.chartVolt.ChartAreas.Add(chartArea2);
+            legend2.Name = "Legend1";
+            this.chartVolt.Legends.Add(legend2);
             this.chartVolt.Location = new System.Drawing.Point(0, 0);
             this.chartVolt.Name = "chartVolt";
-            series14.ChartArea = "ChartArea1";
-            series14.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series14.Legend = "Legend1";
-            series14.Name = "음극전위";
-            this.chartVolt.Series.Add(series14);
+            series2.ChartArea = "ChartArea1";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series2.Legend = "Legend1";
+            series2.Name = "음극전위";
+            this.chartVolt.Series.Add(series2);
             this.chartVolt.Size = new System.Drawing.Size(628, 498);
             this.chartVolt.TabIndex = 11;
             this.chartVolt.Text = "음극전위";
             // 
             // chartOxgen
             // 
-            chartArea15.Name = "ChartArea1";
-            this.chartOxgen.ChartAreas.Add(chartArea15);
-            legend15.Name = "Legend1";
-            this.chartOxgen.Legends.Add(legend15);
+            chartArea3.Name = "ChartArea1";
+            this.chartOxgen.ChartAreas.Add(chartArea3);
+            legend3.Name = "Legend1";
+            this.chartOxgen.Legends.Add(legend3);
             this.chartOxgen.Location = new System.Drawing.Point(0, 0);
             this.chartOxgen.Name = "chartOxgen";
-            series15.ChartArea = "ChartArea1";
-            series15.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series15.Legend = "Legend1";
-            series15.Name = "용존산소량";
-            this.chartOxgen.Series.Add(series15);
+            series3.ChartArea = "ChartArea1";
+            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series3.Legend = "Legend1";
+            series3.Name = "용존산소량";
+            this.chartOxgen.Series.Add(series3);
             this.chartOxgen.Size = new System.Drawing.Size(628, 498);
             this.chartOxgen.TabIndex = 10;
             this.chartOxgen.Text = "염도";
             // 
             // chartSalt
             // 
-            chartArea16.Name = "ChartArea1";
-            this.chartSalt.ChartAreas.Add(chartArea16);
-            legend16.Name = "Legend1";
-            this.chartSalt.Legends.Add(legend16);
+            chartArea4.Name = "ChartArea1";
+            this.chartSalt.ChartAreas.Add(chartArea4);
+            legend4.Name = "Legend1";
+            this.chartSalt.Legends.Add(legend4);
             this.chartSalt.Location = new System.Drawing.Point(0, 0);
             this.chartSalt.Name = "chartSalt";
-            series16.ChartArea = "ChartArea1";
-            series16.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series16.Legend = "Legend1";
-            series16.Name = "염도";
-            this.chartSalt.Series.Add(series16);
+            series4.ChartArea = "ChartArea1";
+            series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series4.Legend = "Legend1";
+            series4.Name = "염도";
+            this.chartSalt.Series.Add(series4);
             this.chartSalt.Size = new System.Drawing.Size(628, 498);
             this.chartSalt.TabIndex = 9;
             this.chartSalt.Text = "염도";
             // 
             // chartPH
             // 
-            chartArea17.Name = "ChartArea1";
-            this.chartPH.ChartAreas.Add(chartArea17);
-            legend17.Name = "Legend1";
-            this.chartPH.Legends.Add(legend17);
+            chartArea5.Name = "ChartArea1";
+            this.chartPH.ChartAreas.Add(chartArea5);
+            legend5.Name = "Legend1";
+            this.chartPH.Legends.Add(legend5);
             this.chartPH.Location = new System.Drawing.Point(0, 0);
             this.chartPH.Name = "chartPH";
-            series17.ChartArea = "ChartArea1";
-            series17.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series17.Legend = "Legend1";
-            series17.Name = "PH";
-            this.chartPH.Series.Add(series17);
+            series5.ChartArea = "ChartArea1";
+            series5.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series5.Legend = "Legend1";
+            series5.Name = "PH";
+            this.chartPH.Series.Add(series5);
             this.chartPH.Size = new System.Drawing.Size(628, 498);
             this.chartPH.TabIndex = 8;
             this.chartPH.Text = "PH";
             // 
             // chartTemperature
             // 
-            chartArea18.Name = "ChartArea1";
-            this.chartTemperature.ChartAreas.Add(chartArea18);
-            legend18.Name = "Legend1";
-            this.chartTemperature.Legends.Add(legend18);
+            chartArea6.Name = "ChartArea1";
+            this.chartTemperature.ChartAreas.Add(chartArea6);
+            legend6.Name = "Legend1";
+            this.chartTemperature.Legends.Add(legend6);
             this.chartTemperature.Location = new System.Drawing.Point(0, 0);
             this.chartTemperature.Name = "chartTemperature";
-            series18.ChartArea = "ChartArea1";
-            series18.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series18.Legend = "Legend1";
-            series18.Name = "온도";
-            this.chartTemperature.Series.Add(series18);
+            series6.ChartArea = "ChartArea1";
+            series6.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series6.Legend = "Legend1";
+            series6.Name = "온도";
+            this.chartTemperature.Series.Add(series6);
             this.chartTemperature.Size = new System.Drawing.Size(628, 498);
             this.chartTemperature.TabIndex = 7;
             this.chartTemperature.Text = "온도";
@@ -543,25 +469,87 @@
             this.radioButtonAmp.UseVisualStyleBackColor = true;
             this.radioButtonAmp.CheckedChanged += new System.EventHandler(this.radioButtonAmp_CheckedChanged);
             // 
-            // buttonSaveToFile
+            // textBoxTarget
             // 
-            this.buttonSaveToFile.Location = new System.Drawing.Point(498, 17);
-            this.buttonSaveToFile.Name = "buttonSaveToFile";
-            this.buttonSaveToFile.Size = new System.Drawing.Size(100, 70);
-            this.buttonSaveToFile.TabIndex = 3;
-            this.buttonSaveToFile.Text = "데이터저장";
-            this.buttonSaveToFile.UseVisualStyleBackColor = true;
-            this.buttonSaveToFile.Click += new System.EventHandler(this.buttonSaveFile_Click);
+            this.textBoxTarget.Enabled = false;
+            this.textBoxTarget.Location = new System.Drawing.Point(285, 16);
+            this.textBoxTarget.MaxLength = 3;
+            this.textBoxTarget.Name = "textBoxTarget";
+            this.textBoxTarget.Size = new System.Drawing.Size(142, 21);
+            this.textBoxTarget.TabIndex = 13;
             // 
-            // buttonViewer
+            // label3
             // 
-            this.buttonViewer.Location = new System.Drawing.Point(604, 17);
-            this.buttonViewer.Name = "buttonViewer";
-            this.buttonViewer.Size = new System.Drawing.Size(100, 70);
-            this.buttonViewer.TabIndex = 5;
-            this.buttonViewer.Text = "뷰어열기";
-            this.buttonViewer.UseVisualStyleBackColor = true;
-            this.buttonViewer.Click += new System.EventHandler(this.buttonLoadFile_Click);
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(192, 21);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(69, 12);
+            this.label3.TabIndex = 12;
+            this.label3.Text = "테스터 대상";
+            this.label3.TextAlign = System.Drawing.ContentAlignment.BottomRight;
+            // 
+            // Column1
+            // 
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.Column1.DefaultCellStyle = dataGridViewCellStyle1;
+            this.Column1.HeaderText = "기록시간";
+            this.Column1.Name = "Column1";
+            this.Column1.ReadOnly = true;
+            this.Column1.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // Column4
+            // 
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.Column4.DefaultCellStyle = dataGridViewCellStyle2;
+            this.Column4.HeaderText = "온도";
+            this.Column4.Name = "Column4";
+            this.Column4.ReadOnly = true;
+            this.Column4.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // Column5
+            // 
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.Column5.DefaultCellStyle = dataGridViewCellStyle3;
+            this.Column5.HeaderText = "pH농도";
+            this.Column5.Name = "Column5";
+            this.Column5.ReadOnly = true;
+            this.Column5.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // Column2
+            // 
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.Column2.DefaultCellStyle = dataGridViewCellStyle4;
+            this.Column2.HeaderText = "염도";
+            this.Column2.Name = "Column2";
+            this.Column2.ReadOnly = true;
+            this.Column2.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // Column3
+            // 
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.Column3.DefaultCellStyle = dataGridViewCellStyle5;
+            this.Column3.HeaderText = "용존 산소량";
+            this.Column3.Name = "Column3";
+            this.Column3.ReadOnly = true;
+            this.Column3.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // Column6
+            // 
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.Column6.DefaultCellStyle = dataGridViewCellStyle6;
+            this.Column6.HeaderText = "음극전위";
+            this.Column6.Name = "Column6";
+            this.Column6.ReadOnly = true;
+            this.Column6.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // Column7
+            // 
+            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.Column7.DefaultCellStyle = dataGridViewCellStyle7;
+            this.Column7.HeaderText = "양극전류";
+            this.Column7.Name = "Column7";
+            this.Column7.ReadOnly = true;
+            this.Column7.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
             // Form1
             // 
@@ -569,13 +557,10 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1417, 607);
             this.Controls.Add(this.splitContainer1);
-            this.Controls.Add(this.toolStrip1);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "ICCP";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
-            this.toolStrip1.ResumeLayout(false);
-            this.toolStrip1.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.panel1.ResumeLayout(false);
@@ -596,44 +581,29 @@
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
 
-        private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.ToolStripLabel lblPortDesc;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripButton btnOpenClose;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.ToolStripButton toolStripButton1;
         private System.IO.Ports.SerialPort serialPort1;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel lblMsg;
         private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Button btnSend;
+        private System.Windows.Forms.Button btnStart;
         private System.Windows.Forms.TextBox SendTextBox;
         private System.Windows.Forms.TextBox RecvTextBox;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.DataGridView dataGridView1;
-        private System.Windows.Forms.Button buttonSaveToFile;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.RadioButton radioButtonPH;
         private System.Windows.Forms.RadioButton radioButtonTemperature;
         private System.Windows.Forms.RadioButton radioButtonAmp;
         private System.Windows.Forms.Button buttonViewer;
-        private System.Windows.Forms.ComboBox comboBoxTimer;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.DateTimePicker dateTimePickerEnd;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column1;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column4;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column5;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column2;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column3;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column6;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column7;
         private System.Windows.Forms.DataVisualization.Charting.Chart chartTemperature;
         private System.Windows.Forms.RadioButton radioButtonVolt;
         private System.Windows.Forms.RadioButton radioButtonOxgen;
@@ -643,6 +613,16 @@
         private System.Windows.Forms.DataVisualization.Charting.Chart chartOxgen;
         private System.Windows.Forms.DataVisualization.Charting.Chart chartSalt;
         private System.Windows.Forms.DataVisualization.Charting.Chart chartPH;
+        private System.Windows.Forms.TextBox textBoxDelay;
+        private System.Windows.Forms.TextBox textBoxTarget;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column4;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column5;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column2;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column3;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column6;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column7;
     }
 }
 

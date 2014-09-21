@@ -24,21 +24,21 @@ namespace SerialProgram
         
         System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
         TesterEnviorment testEnv = new SerialProgram.TesterEnviorment();
-        FormViewer viewer = new FormViewer();
+        FormViewer viewer;
 
         public Form1()
         {
 
             InitializeComponent();
-            lblPortDesc.Text = Rs232Utils.PortDescString(serialPort1);
-            btnOpenClose.Tag = PortStatus.Closed;
+            testEnv.descPort = Rs232Utils.PortDescString(serialPort1);
 
-            
+            testEnv.InitFromFile();
+            testEnv.SaveConfig();
 
 #if DEBUG
-            comboBoxTimer.SelectedIndex = 2;
+            textBoxDelay.Text = "1";
 #else
-            comboBoxTimer.SelectedIndex = 0;
+            textBoxDelay.Text = "0";
 #endif
             timer.Tick += new EventHandler(timer_Tick);
 
@@ -170,66 +170,12 @@ namespace SerialProgram
         {
             lblMsg.Text = s;
         }
-
-        private void lblPortDesc_Click(object sender, EventArgs e)
-        {
-            using (ComportSettingDialog csd = new ComportSettingDialog())
-            {
-                csd.Owner = this;
-                csd.PortDescString = lblPortDesc.Text;
-                if (csd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                {
-                    Rs232Utils.SetPortDescString(serialPort1, csd.PortDescString);
-                    lblPortDesc.Text = csd.PortDescString;
-                }
-            }
-        }
-
-        private void lblPortDesc_MouseHover(object sender, EventArgs e)
-        {
-            DisplayStatusbarMessage("마우스를 클릭하면 통신 포트 설정값을 변경할 수 있습니다");
-        }
-
+        
         private void MessageNone(object sender, EventArgs e)
         {
             DisplayStatusbarMessage("");
         }
-
-        private void btnOpenClose_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                if ((PortStatus)btnOpenClose.Tag == PortStatus.Closed)
-                {
-                    serialPort1.Open();
-                    btnOpenClose.Text = "통신포트 닫기";
-                    btnOpenClose.Tag = PortStatus.Opened;
-                    btnSend.Enabled = true;
-                    btnSend.Text = "Start";
-
-                    testEnv.connected = true;
-
-                    DisplayStatusbarMessage("통신포트가 열렸습니다. 데이터를 전송할 수 있습니다");
-                }
-                else
-                {
-                    serialPort1.Close();
-                    btnOpenClose.Text = "통신포트 열기";
-                    btnOpenClose.Tag = PortStatus.Closed;
-                    btnSend.Text = "Not Connected";
-                    btnSend.Enabled = false;
-
-                    testEnv.connected = false;
-
-                    DisplayStatusbarMessage("통신포트를 닫았습니다");
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
+        
         public string recieveSB;
         private void serialPort1_DataReceived(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
         {
@@ -302,34 +248,88 @@ namespace SerialProgram
             SetDataToUI(row);
         }
         
-        //데이터를 보내기
-        private void btnSend_Click(object sender, EventArgs e)
+        private void StartTest()
         {
+            testEnv.working = true;
+            btnStart.Text = "Stop";
+
+            timer.Stop();
+            timer.Interval = testEnv.delay;
+            timer.Start();
+            ModalessMsgBox("시험 시작");
+        }
+
+        private void StopTest()
+        {
+
+            testEnv.working = false;
+            btnStart.Text = "Start";
+
+            timer.Stop();
+            ModalessMsgBox("시험 종료");
+        }
+        //데이터를 보내기
+        private void btnStart_Click(object sender, EventArgs e)
+        {
+            if (testEnv.connected == false)
+            {
+                using (ComportSettingDialog csd = new ComportSettingDialog())
+                {
+                    csd.Owner = this;
+                    csd.PortDescString = testEnv.descPort;
+                    if (csd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    {
+                        Rs232Utils.SetPortDescString(serialPort1, csd.PortDescString);
+                        testEnv.descPort = csd.PortDescString;
+
+                        try
+                        {
+#if !DEBUG
+                            serialPort1.Open();
+#endif
+                            testEnv.connected = true;
+
+                            btnStart.Text = "시작";
+                        }
+                        catch(Exception ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                        }
+                    }
+                }
+
+                if (testEnv.endTime > DateTime.Now)
+                {
+                    // 이어하기
+                    LoadFromFile();
+
+                    StartTest();
+                }
+
+                return;
+            }
+
             if (!testEnv.EnableRunTest())
             {
-                MessageBox.Show("설정이 완료되지 못했습니다.");
+                using (TesterSettingDialog tsd = new TesterSettingDialog())
+                {
+                    tsd.Owner = this;
+                    if (tsd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    {
+
+                    }
+                }
+
                 return;
             }
 
             if (testEnv.working)
             {
-                testEnv.working = false;
-                btnSend.Text = "Start";
-
-                timer.Stop();
-                ModalessMsgBox("시험 종료");
+                StopTest();
             }
             else
             {
-                testEnv.working = true;
-                btnSend.Text = "Stop";
-
-                InitGraph();
-
-                timer.Stop();
-                timer.Interval = testEnv.delay;
-                timer.Start();
-                ModalessMsgBox("시험 시작");
+                StartTest();
             }
         }
 
@@ -354,8 +354,9 @@ namespace SerialProgram
 
         private void buttonLoadFile_Click(object sender, EventArgs e)
         {
-            this.viewer.Owner = this;
-            this.viewer.Show();
+            viewer = new FormViewer();
+            viewer.Owner = this;
+            viewer.Show();
         }
 
         private SaveFileDialog saveFileDialog = new SaveFileDialog();
@@ -371,13 +372,6 @@ namespace SerialProgram
             if (result == DialogResult.OK)
             {
                 int num = 0;
-                object missingType = Type.Missing;
-                Microsoft.Office.Interop.Excel.Application objApp;
-                Microsoft.Office.Interop.Excel._Workbook objBook;
-                Microsoft.Office.Interop.Excel.Workbooks objBooks;
-                Microsoft.Office.Interop.Excel.Sheets objSheets;
-                Microsoft.Office.Interop.Excel._Worksheet objSheet;
-                Microsoft.Office.Interop.Excel.Range range;
 
                 string[] headers = new string[myDataGridView.ColumnCount];
                 string[] columns = new string[myDataGridView.ColumnCount];
@@ -399,6 +393,14 @@ namespace SerialProgram
 
                 try
                 {
+                    object missingType = Type.Missing;
+                    Microsoft.Office.Interop.Excel.Application objApp;
+                    Microsoft.Office.Interop.Excel._Workbook objBook;
+                    Microsoft.Office.Interop.Excel.Workbooks objBooks;
+                    Microsoft.Office.Interop.Excel.Sheets objSheets;
+                    Microsoft.Office.Interop.Excel._Worksheet objSheet;
+                    Microsoft.Office.Interop.Excel.Range range = null;
+
                     objApp = new Microsoft.Office.Interop.Excel.Application();
                     objBooks = objApp.Workbooks;
                     objBook = objBooks.Add(Missing.Value);
@@ -434,10 +436,13 @@ namespace SerialProgram
                         missingType, missingType, missingType, missingType, missingType);
 
                     objBook.Close(false, missingType, missingType);
-
                     Cursor.Current = Cursors.Default;
+
                     // Clean up
+                    ReleaseExcelObject(range);
                     ReleaseExcelObject(objSheet);
+                    ReleaseExcelObject(objSheets);
+                    ReleaseExcelObject(objBook);
                     ReleaseExcelObject(objBooks);
                     ReleaseExcelObject(objApp);
 
@@ -547,19 +552,6 @@ namespace SerialProgram
             testEnv.fileName = "ICCP " + dateTimePickerEnd.Value.ToString();
         }
 
-        private void comboBoxTimer_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (comboBoxTimer.SelectedIndex >= 0)
-            {
-                if (comboBoxTimer.SelectedIndex == 0)
-                    testEnv.delay = 1000 * 60 * 30;
-                else if (comboBoxTimer.SelectedIndex == 1)
-                    testEnv.delay = 1000 * 60 * 60 * 24;
-                else if (comboBoxTimer.SelectedIndex == 2)
-                    testEnv.delay = 1000 * 5;
-            }
-        }
-
         private void ModalessMsgBox(string msg)
         {
             new Thread(() => { MessageBox.Show(new Form() { TopMost = true }, msg); }).Start();
@@ -603,6 +595,14 @@ namespace SerialProgram
         private void radioButtonVolt_CheckedChanged(object sender, EventArgs e)
         {
             SetVisibleGraph(eGraphState.VOLT);
+        }
+
+        private void textBoxDelay_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!(Char.IsDigit(e.KeyChar) || e.KeyChar == Convert.ToChar(Keys.Back)))
+            {
+                e.Handled = true;
+            }
         }
     }
 }
