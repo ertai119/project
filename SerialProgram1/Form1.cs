@@ -13,22 +13,27 @@ using System.Data.OleDb;
 
 using System.Runtime.InteropServices;
 
+
 namespace SerialProgram
 {
     public partial class Form1 : Form
     {
 
         internal enum PortStatus { None, Opened, Closed }
-        internal enum eGraphState { INVALID, VOLT, TEMPERATURE, PH}
+        internal enum eGraphState { INVALID, TEMPERATURE, PH, SALT, OXGEN, AMP, VOLT}
         
         System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
         TesterEnviorment testEnv = new SerialProgram.TesterEnviorment();
+        FormViewer viewer = new FormViewer();
 
         public Form1()
         {
+
             InitializeComponent();
             lblPortDesc.Text = Rs232Utils.PortDescString(serialPort1);
             btnOpenClose.Tag = PortStatus.Closed;
+
+            
 
 #if DEBUG
             comboBoxTimer.SelectedIndex = 2;
@@ -37,91 +42,127 @@ namespace SerialProgram
 #endif
             timer.Tick += new EventHandler(timer_Tick);
 
-            radioButton1.Checked = true;
+            radioButtonTemperature.Checked = true;
 
-            chartVolt.ChartAreas[0].CursorX.IsUserSelectionEnabled = true;
-            chartVolt.ChartAreas[0].CursorY.IsUserSelectionEnabled = true;
-            chartVolt.ChartAreas[0].AxisX.ScaleView.Zoomable = true;
-            chartVolt.ChartAreas[0].AxisY.ScaleView.Zoomable = true;
-
-            // Set automatic scrolling 
-            chartTemperature.ChartAreas[0].CursorX.IsUserSelectionEnabled = true;
-            chartTemperature.ChartAreas[0].CursorY.IsUserSelectionEnabled = true;
-            chartTemperature.ChartAreas[0].CursorX.AutoScroll = true;
-            chartTemperature.ChartAreas[0].CursorY.AutoScroll = true;
-
-            // Allow user selection for Zoom
-            chartPH.ChartAreas[0].CursorX.IsUserSelectionEnabled = true;
-            chartPH.ChartAreas[0].CursorY.IsUserSelectionEnabled = true;
-            chartPH.ChartAreas[0].CursorX.IsUserSelectionEnabled = true;
-            chartPH.ChartAreas[0].CursorY.IsUserSelectionEnabled = true;
+            object[] AllGraph = { chartTemperature, chartSalt, chartOxgen, chartAmp, chartVolt, chartPH };
+            foreach (System.Windows.Forms.DataVisualization.Charting.Chart chart in AllGraph)
+            {
+                chart.ChartAreas[0].CursorX.IsUserSelectionEnabled = true;
+                chart.ChartAreas[0].CursorY.IsUserSelectionEnabled = true;
+                chart.ChartAreas[0].CursorY.IsUserEnabled = true;
+                chart.ChartAreas[0].CursorY.IsUserEnabled = true;
+                chart.ChartAreas[0].AxisX.ScaleView.Zoomable = true;
+                chart.ChartAreas[0].AxisY.ScaleView.Zoomable = true;
+                chart.ChartAreas[0].CursorX.AutoScroll = true;
+                chart.ChartAreas[0].CursorY.AutoScroll = true;
+                chart.Series[0].IsValueShownAsLabel = false;
+                chart.Legends[0].Enabled = true;
+            }
         }
 
         private void InitGraph()
         {
-            chartVolt.Series[0].Points.Clear();
-            chartVolt.Series[1].Points.Clear();
-            chartTemperature.Series[0].Points.Clear();
-            chartPH.Series[0].Points.Clear();
+            object[] AllGraph = { chartTemperature, chartPH, chartSalt, chartOxgen, chartVolt, chartAmp };
+            foreach (System.Windows.Forms.DataVisualization.Charting.Chart chart in AllGraph)
+            {
+                chart.Series[0].Points.Clear();
+            }
         }
 
         private void SetDataToUI(string[] data)
         {
-            dataGridView1.Rows.Add(data);
+            string strGridTimestamp = data[0] != null ? data[0] : "NA";
+            string strGridTemperature = data[1] != null ? data[1] : "NA";
+            string strGridPH = data[2] != null ? data[2] : "NA";
+            string strGridSalt = data[3] != null ? data[3] : "NA";
+            string strGridOxgen = data[4] != null ? data[4] : "NA";
+            string strGridVolt = data[5] != null ? data[5] : "NA";
+            string strGridAmp = data[6] != null ? data[6] : "NA";
 
-            string strTimestamp = data[0];
+            string[] gridData = {strGridTimestamp, strGridTemperature
+                , strGridPH, strGridSalt, strGridOxgen, strGridVolt, strGridAmp};
+            dataGridView1.Rows.Add(gridData);
 
-            chartVolt.Series[0].Points.AddXY(strTimestamp, 10);
-            chartVolt.Series[1].Points.AddXY(strTimestamp, 100);
-            chartVolt.Series[0].IsValueShownAsLabel = false;
-            chartVolt.Series[1].IsValueShownAsLabel = false;
-            chartVolt.Legends[0].Enabled = true;
+            string strTimestamp = data[0] != null ? data[0] : "";
+            string strTemperature = data[1] != null ? data[1] : "";
+            string strPH = data[2] != null ? data[2] : "";
+            string strSalt = data[3] != null ? data[3] : "";
+            string strOxgen = data[4] != null ? data[4] : "";
+            string strVolt = data[5] != null ? data[5] : "";
+            string strAmp = data[6] != null ? data[6] : "";
 
-            chartTemperature.Series[0].Points.AddXY(strTimestamp, 10);
-            chartTemperature.Series[0].IsValueShownAsLabel = false;
-            chartTemperature.Legends[0].Enabled = true;
-
-            chartPH.Series[0].Points.AddXY(strTimestamp, 10);
-            chartPH.Series[0].IsValueShownAsLabel = false;
-            chartPH.Legends[0].Enabled = true;
-        }
-
-        private void Disconnected()
-        {
-
+            chartTemperature.Series[0].Points.AddXY(strTimestamp, strTemperature);
+            chartPH.Series[0].Points.AddXY(strTimestamp, strPH);
+            chartSalt.Series[0].Points.AddXY(strTimestamp, strSalt);
+            chartOxgen.Series[0].Points.AddXY(strTimestamp, strOxgen);
+            chartVolt.Series[0].Points.AddXY(strTimestamp, strVolt);
+            chartAmp.Series[0].Points.AddXY(strTimestamp, strAmp);
         }
 
         private void SetVisibleGraph(eGraphState graphState)
         {
             if (graphState == eGraphState.INVALID)
             {
+                chartTemperature.Visible = false;
+                chartPH.Visible = false;
+                chartSalt.Visible = false;
+                chartOxgen.Visible = false;
+                chartAmp.Visible = false;
                 chartVolt.Visible = false;
-                chartTemperature.Visible = false;
-                chartPH.Visible = false;
-            }
-            else if (graphState == eGraphState.VOLT)
-            {
-                chartVolt.Visible = true;
-                chartTemperature.Visible = false;
-                chartPH.Visible = false;
-
-                chartVolt.Invalidate();
-
             }
             else if (graphState == eGraphState.TEMPERATURE)
             {
-                chartVolt.Visible = false;
                 chartTemperature.Visible = true;
                 chartPH.Visible = false;
-
-                chartTemperature.Invalidate();
+                chartSalt.Visible = false;
+                chartOxgen.Visible = false;
+                chartAmp.Visible = false;
+                chartVolt.Visible = false;
             }
             else if (graphState == eGraphState.PH)
             {
-                chartVolt.Visible = false;
                 chartTemperature.Visible = false;
                 chartPH.Visible = true;
-                chartPH.Invalidate();
+                chartSalt.Visible = false;
+                chartOxgen.Visible = false;
+                chartAmp.Visible = false;
+                chartVolt.Visible = false;
+            }
+            else if (graphState == eGraphState.SALT)
+            {
+                chartTemperature.Visible = false;
+                chartPH.Visible = false;
+                chartSalt.Visible = true;
+                chartOxgen.Visible = false;
+                chartAmp.Visible = false;
+                chartVolt.Visible = false;
+            }
+            else if (graphState == eGraphState.OXGEN)
+            {
+                chartTemperature.Visible = false;
+                chartPH.Visible = false;
+                chartSalt.Visible = false;
+                chartOxgen.Visible = true;
+                chartAmp.Visible = false;
+                chartVolt.Visible = false;
+            }
+            else if (graphState == eGraphState.AMP)
+            {
+                chartTemperature.Visible = false;
+                chartPH.Visible = false;
+                chartSalt.Visible = false;
+                chartOxgen.Visible = false;
+                chartAmp.Visible = true;
+                chartVolt.Visible = false;
+            }
+            else if (graphState == eGraphState.VOLT)
+            {
+                chartTemperature.Visible = false;
+                chartPH.Visible = false;
+                chartSalt.Visible = false;
+                chartOxgen.Visible = false;
+                chartAmp.Visible = false;
+                chartVolt.Visible = true;
             }
         }
 
@@ -234,12 +275,16 @@ namespace SerialProgram
             token += chStr[4];
 
             int payloadLength = Convert.ToInt32(token);
-            if (payloadLength != 20)
+            if (payloadLength % 4 != 0)
                 return;
 
             token = "";
-            string[] datas = new string[payloadLength / 4];
-            for( int i = 0 ;i < payloadLength / 4 ; i++)
+            int receivedTokencount = payloadLength / 4;
+            string[] datas = new string[TesterEnviorment.PACKET_TOKEN_COUNT];
+            if (receivedTokencount > TesterEnviorment.PACKET_TOKEN_COUNT)
+                return;
+
+            for (int i = 0; i < receivedTokencount; i++)
             {
                 token += chStr[5 + i * 4];
                 token += chStr[5 + i * 4 + 1];
@@ -251,10 +296,9 @@ namespace SerialProgram
                 token = "";
             }
 
-            //수조온도	pH농도	염도	용존산소량	음극전위
-            string[] row = { DateTime.Now.ToString(), datas[0], datas[1], datas[2], datas[3], datas[4] };
-            
-
+            //수조온도	pH농도	염도	용존산소량	음극전위, 양극전류
+            string[] row = { DateTime.Now.ToString(), datas[0], datas[1]
+                               , datas[2], datas[3], datas[4], datas[5] };
             SetDataToUI(row);
         }
         
@@ -298,14 +342,26 @@ namespace SerialProgram
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void buttonPrintGraph_Click(object sender, EventArgs e)
         {
+            
+        }
+
+        private void buttonSaveFile_Click(object sender, EventArgs e)
+        {
+            SaveTofile(true, dataGridView1);
+        }
+
+        private void buttonLoadFile_Click(object sender, EventArgs e)
+        {
+            this.viewer.Owner = this;
+            this.viewer.Show();
         }
 
         private SaveFileDialog saveFileDialog = new SaveFileDialog();
         public void SaveTofile(bool captions, DataGridView myDataGridView)
         {
-            this.saveFileDialog.FileName = "TempName";
+            this.saveFileDialog.FileName = testEnv.fileName;
             this.saveFileDialog.DefaultExt = "xls";
             this.saveFileDialog.Filter = "Excel files (*.xls)|*.xls";
             this.saveFileDialog.InitialDirectory = System.Environment.CurrentDirectory;
@@ -385,7 +441,7 @@ namespace SerialProgram
                     ReleaseExcelObject(objBooks);
                     ReleaseExcelObject(objApp);
 
-                    MessageBox.Show("Save Success!!!");
+                    ModalessMsgBox("Save Success!!!");
                 }
                 catch (Exception theException)
                 {
@@ -394,7 +450,7 @@ namespace SerialProgram
                     errorMessage = String.Concat(errorMessage, theException.Message);
                     errorMessage = String.Concat(errorMessage, " Line: ");
                     errorMessage = String.Concat(errorMessage, theException.Source);
-                    MessageBox.Show(errorMessage, "Error");
+                    ModalessMsgBox(errorMessage);
                 }
             }
         }
@@ -417,16 +473,6 @@ namespace SerialProgram
             {
                 GC.Collect();
             }
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            SaveTofile(true, dataGridView1);
-        }
-
-        private void button3_Click(object sender, EventArgs e)
-        {
-            chartVolt.Printing.Print(true);
         }
 
         void timer_Tick(object sender, EventArgs e)
@@ -456,24 +502,6 @@ namespace SerialProgram
             SendTextBox.Text += Rs232Utils.ByteArrayToHexString(buffer) + "\r\n";
         }
 
-        // 전위
-        private void radioButton1_CheckedChanged(object sender, EventArgs e)
-        {
-            SetVisibleGraph(eGraphState.VOLT);
-        }
-
-        // 온도
-        private void radioButton2_CheckedChanged(object sender, EventArgs e)
-        {
-            SetVisibleGraph(eGraphState.TEMPERATURE);
-        }
-
-        // ph농도
-        private void radioButton3_CheckedChanged(object sender, EventArgs e)
-        {
-            SetVisibleGraph(eGraphState.PH);
-        }
-
         public void LoadFromFile()
         {
             try
@@ -497,27 +525,26 @@ namespace SerialProgram
 
                     foreach (DataRow dr in ds.Tables[0].Rows)
                     {
-                        string[] row = { dr[0].ToString(), dr[1].ToString(), dr[2].ToString(), dr[3].ToString(), dr[4].ToString(), dr[5].ToString() };
+                        string[] row = { dr[0].ToString(), dr[1].ToString()
+                                           , dr[2].ToString(), dr[3].ToString()
+                                           , dr[4].ToString(), dr[5].ToString()
+                                           , dr[6].ToString() };
                         SetDataToUI(row);
                     }
                 }
             }
             catch
             {
-                MessageBox.Show("중복되는 파일입니다. 파일을 다시한번확인해주세요", "확인");
+                ModalessMsgBox("중복되는 파일입니다. 파일을 다시한번확인해주세요");
             }
 
             return;
-        }
-
-        private void button4_Click(object sender, EventArgs e)
-        {
-            LoadFromFile();
         }
         
         private void dateTimePicker2_ValueChanged(object sender, EventArgs e)
         {
             testEnv.endTime = dateTimePickerEnd.Value;
+            testEnv.fileName = "ICCP " + dateTimePickerEnd.Value.ToString();
         }
 
         private void comboBoxTimer_SelectedIndexChanged(object sender, EventArgs e)
@@ -543,6 +570,39 @@ namespace SerialProgram
         {
             e.Graphics.FillRectangle(Brushes.Red,
               new Rectangle(500, 500, 500, 500));
+        }
+
+
+        // 전위
+        private void radioButtonAmp_CheckedChanged(object sender, EventArgs e)
+        {
+            SetVisibleGraph(eGraphState.AMP);
+        }
+
+        // 온도
+        private void radioButtonTemperature_CheckedChanged(object sender, EventArgs e)
+        {
+            SetVisibleGraph(eGraphState.TEMPERATURE);
+        }
+
+        // ph농도
+        private void radioButtonPH_CheckedChanged(object sender, EventArgs e)
+        {
+            SetVisibleGraph(eGraphState.PH);
+        }
+        private void radioButtonSalt_CheckedChanged(object sender, EventArgs e)
+        {
+            SetVisibleGraph(eGraphState.SALT);
+        }
+
+        private void radioButtonOxgen_CheckedChanged(object sender, EventArgs e)
+        {
+            SetVisibleGraph(eGraphState.OXGEN);
+        }
+
+        private void radioButtonVolt_CheckedChanged(object sender, EventArgs e)
+        {
+            SetVisibleGraph(eGraphState.VOLT);
         }
     }
 }

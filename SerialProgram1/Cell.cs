@@ -27,6 +27,9 @@ namespace SerialProgram
         public bool connected { get; set; }
         public bool working { get; set; }
 
+        static public int PACKET_TOKEN_COUNT = 6;
+        static public string NA = "N/A";
+
         public bool EnableRunTest()
         {
             if (DateTime.Now >= endTime)
