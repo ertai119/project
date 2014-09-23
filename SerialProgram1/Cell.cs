@@ -17,13 +17,19 @@ namespace SerialProgram
         public float amp { get; set; }
     }
 
-    class Cell
-    { }
     class TesterEnviorment
     {
 
         private bool init { get; set; }
-        public string fileName { get; set; }
+        public string target { get; set; }
+        public string fileName 
+        {
+            get
+            {
+                return target + "_" + endTime.ToString("yyyy.MM.dd.HH.mm.ss");
+            }
+        }
+
         public DateTime endTime { get; set; }
         public int delay { get; set; }
         public bool connected { get; set; }
@@ -31,6 +37,9 @@ namespace SerialProgram
         public string descPort { get; set; }
         static public int PACKET_TOKEN_COUNT = 6;
         static public string NA = "N/A";
+
+        public string localValue { get; set; }
+        public string localId { get; set; }
 
         public bool EnableRunTest()
         {
@@ -43,10 +52,16 @@ namespace SerialProgram
             if (working == true)
                 return false;
 
-            if (fileName == null)
+            if (target == null)
                 return false;
 
-            if (fileName.Length <= 0)
+            if (target.Length <= 0)
+                return false;
+
+            if (localId == null || localId.Length <= 0)
+                return false;
+
+            if (localValue == null || localValue.Length <= 0)
                 return false;
 
             return true;
@@ -67,26 +82,34 @@ namespace SerialProgram
                     if (tokens.Length != 2)
                         continue;
 
-                    string token = tokens[0];
-                    string value = tokens[1];
+                    string token = tokens[0].ToUpper();
+                    string value = tokens[1].ToUpper();
                     if (value.Length == 0)
                         continue;
 
-                    if (token == "delay")
+                    if (token == "DELAY")
                     {
                         delay = Convert.ToInt16(value);
                     }
-                    else if (token == "endTime")
+                    else if (token == "ENDTIME")
                     {
                         endTime = Convert.ToDateTime(value);
                     }
-                    else if (token == "fileName")
+                    else if (token == "FILENAME")
                     {
-                        fileName = value;
+                        target = value;
                     }
                     else if (token == "STX")
                     {
                         //string temp
+                    }
+                    else if (token == "LOCAL_ID")
+                    {
+                        localId = value;
+                    }
+                    else if (token == "LOCAL_VALUE")
+                    {
+                        localValue = value;
                     }
                 }
 
@@ -107,8 +130,10 @@ namespace SerialProgram
 
                 sw.WriteLine("delay=" + delay.ToString());
                 sw.WriteLine("endTime=" + endTime.ToString());
-                sw.WriteLine("fileName=" + fileName);
-                
+                sw.WriteLine("fileName=" + target);
+                sw.WriteLine("LOCAL_ID=" + localId);
+                sw.WriteLine("LOCAL_VALUE=" + localValue);
+
                 sw.Close();
             }
             catch (Exception e)

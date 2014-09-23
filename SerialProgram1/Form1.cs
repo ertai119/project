@@ -21,7 +21,10 @@ namespace SerialProgram
 
         internal enum PortStatus { None, Opened, Closed }
         internal enum eGraphState { INVALID, TEMPERATURE, PH, SALT, OXGEN, AMP, VOLT}
-        
+
+        private int sendCnt = 0;
+        private int recvCnt = 0;
+
         System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
         TesterEnviorment testEnv = new SerialProgram.TesterEnviorment();
         FormViewer viewer;
@@ -30,16 +33,13 @@ namespace SerialProgram
         {
 
             InitializeComponent();
+            
             testEnv.descPort = Rs232Utils.PortDescString(serialPort1);
+            DisplayStatusbarMessage(testEnv.descPort);
 
             testEnv.InitFromFile();
             testEnv.SaveConfig();
-
-#if DEBUG
-            textBoxDelay.Text = "1";
-#else
-            textBoxDelay.Text = "0";
-#endif
+            AdjustBtnText();
             timer.Tick += new EventHandler(timer_Tick);
 
             radioButtonTemperature.Checked = true;
@@ -168,7 +168,7 @@ namespace SerialProgram
 
         private void DisplayStatusbarMessage(string s)
         {
-            lblMsg.Text = s;
+            toolStripStatusLabel1.Text = s;
         }
         
         private void MessageNone(object sender, EventArgs e)
@@ -180,10 +180,10 @@ namespace SerialProgram
         private void serialPort1_DataReceived(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
         {
             // 비동기로 넘긴다.
-            this.Invoke(new EventHandler(AddRecieve));
+            this.Invoke(new EventHandler(recvData));
         }
 
-        private void AddRecieve(object sender, EventArgs e)
+        private void recvData(object sender, EventArgs e)
         {
             string st = serialPort1.ReadExisting();
             recieveSB += st;
@@ -194,11 +194,11 @@ namespace SerialProgram
             char[] buffer = st.ToCharArray();
             if (buffer[buffer.Length - 1] == Rs232Utils.RECV_ETX)
             {
-                this.Invoke(new EventHandler(ReadData));
+                this.Invoke(new EventHandler(HandleReadData));
             }
         }
 
-        private void ReadData(object s, EventArgs e)
+        private void HandleReadData(object s, EventArgs e)
         {
             // 누적된 데이터를 받고
             string recieveData = recieveSB.ToString();
@@ -208,6 +208,7 @@ namespace SerialProgram
 
             // 누적 데이터를 없애고
             recieveSB = "";
+            recvCnt++;
 
             if (recieveData.Length <= 0)
                 return;
@@ -248,26 +249,72 @@ namespace SerialProgram
             SetDataToUI(row);
         }
         
-        private void StartTest()
+        private void SetStateStartTest()
         {
             testEnv.working = true;
-            btnStart.Text = "Stop";
 
             timer.Stop();
-            timer.Interval = testEnv.delay;
+
+            sendCnt = 0;
+            recvCnt = 0;
+#if DEBUG
+            timer.Interval = 5 * 1000;
+#else
+            timer.Interval = testEnv.delay * 1000 * 60;
+#endif
             timer.Start();
             ModalessMsgBox("시험 시작");
+
+            AdjustBtnText();
         }
 
-        private void StopTest()
+        private void SetStateStopTest()
         {
-
             testEnv.working = false;
-            btnStart.Text = "Start";
 
             timer.Stop();
-            ModalessMsgBox("시험 종료");
+
+            AdjustBtnText();
         }
+
+        private void SetStateTestSetting()
+        {
+            using (TesterSettingDialog tsd = new TesterSettingDialog())
+            {
+                tsd.Owner = this;
+                if (tsd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    testEnv.target = tsd.target;
+                    testEnv.delay = tsd.delay;
+                    testEnv.endTime = Convert.ToDateTime(tsd.endTime);
+
+                    textBoxTarget.Text = testEnv.target;
+                    textBoxDelay.Text = testEnv.delay.ToString();
+                    textBoxEnd.Text = testEnv.endTime.ToString();
+                }
+
+                if (testEnv.EnableRunTest())
+                {
+                    testEnv.SaveConfig(); ;
+                    InitGraph();
+                    dataGridView1.Rows.Clear();
+                }
+                
+
+                AdjustBtnText();
+            }
+        }
+
+        private void SetStatePortSetting()
+        {
+            testEnv.connected = false;
+            testEnv.working = false;
+            
+            timer.Stop();
+
+            AdjustBtnText();
+        }
+
         //데이터를 보내기
         private void btnStart_Click(object sender, EventArgs e)
         {
@@ -289,47 +336,94 @@ namespace SerialProgram
 #endif
                             testEnv.connected = true;
 
-                            btnStart.Text = "시작";
+                            AdjustBtnText();
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
                             MessageBox.Show(ex.Message);
                         }
                     }
                 }
-
+                
                 if (testEnv.endTime > DateTime.Now)
                 {
-                    // 이어하기
-                    LoadFromFile();
-
-                    StartTest();
-                }
-
-                return;
-            }
-
-            if (!testEnv.EnableRunTest())
-            {
-                using (TesterSettingDialog tsd = new TesterSettingDialog())
-                {
-                    tsd.Owner = this;
-                    if (tsd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    if (MessageBox.Show("이전 테스트가 완료되지 못했습니다. 이어하시겠습니까?"
+                        , "이어하기",MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+                        == DialogResult.Yes)
                     {
+                        // 이어하기
+                        LoadFromFile();
 
+                        SetStateStartTest();
+                    }
+                    else
+                    {
+                        InitGraph();
+                        dataGridView1.Rows.Clear();
+
+                        testEnv.target = "";
                     }
                 }
 
                 return;
             }
 
-            if (testEnv.working)
+            if (testEnv.connected)
             {
-                StopTest();
+                if (testEnv.working)
+                {
+                    if (MessageBox.Show("시험을 종료하시겠습니까?"
+                        , "시험 종료", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+                        == DialogResult.Yes)
+                    {
+                        SetStateStopTest();
+                        testEnv.target = "";
+                    }
+
+                    return;
+                }
+
+                if (!testEnv.EnableRunTest())
+                {
+                    SetStateTestSetting();
+                    return;
+                }
+                else
+                {
+                    SetStateStartTest();
+                    return;
+                }
             }
-            else
+
+            
+        }
+        private void AdjustBtnText()
+        {
+            if (testEnv.connected == false)
             {
-                StartTest();
+                btnStart.Text = "포트 설정";
+                return;
+            }
+
+            if (testEnv.connected)
+            {
+                if (testEnv.working)
+                {
+                    btnStart.Text = "시험 종료";
+                    return;
+                }
+
+                if (!testEnv.EnableRunTest())
+                {
+                    btnStart.Text = "시험 환경 설정";
+                    return;
+                }
+                else
+                {
+                    btnStart.Text = "시험 시작";
+                    return;
+                }
+
             }
         }
 
@@ -342,121 +436,99 @@ namespace SerialProgram
             }
         }
 
-        private void buttonPrintGraph_Click(object sender, EventArgs e)
-        {
-            
-        }
-
         private void buttonSaveFile_Click(object sender, EventArgs e)
         {
             SaveTofile(true, dataGridView1);
         }
 
-        private void buttonLoadFile_Click(object sender, EventArgs e)
-        {
-            viewer = new FormViewer();
-            viewer.Owner = this;
-            viewer.Show();
-        }
-
         private SaveFileDialog saveFileDialog = new SaveFileDialog();
         public void SaveTofile(bool captions, DataGridView myDataGridView)
         {
-            this.saveFileDialog.FileName = testEnv.fileName;
-            this.saveFileDialog.DefaultExt = "xls";
-            this.saveFileDialog.Filter = "Excel files (*.xls)|*.xls";
-            this.saveFileDialog.InitialDirectory = System.Environment.CurrentDirectory;
+            int num = 0;
 
-            DialogResult result = saveFileDialog.ShowDialog();
+            string[] headers = new string[myDataGridView.ColumnCount];
+            string[] columns = new string[myDataGridView.ColumnCount];
 
-            if (result == DialogResult.OK)
+            for (int c = 0; c < myDataGridView.ColumnCount; c++)
             {
-                int num = 0;
+                headers[c] = myDataGridView.Rows[0].Cells[c].OwningColumn.HeaderText.ToString();
 
-                string[] headers = new string[myDataGridView.ColumnCount];
-                string[] columns = new string[myDataGridView.ColumnCount];
-
-                for (int c = 0; c < myDataGridView.ColumnCount; c++)
+                if (c <= 25)
                 {
-                    headers[c] = myDataGridView.Rows[0].Cells[c].OwningColumn.HeaderText.ToString();
+                    num = c + 65;
+                    columns[c] = Convert.ToString((char)num);
+                }
+                else
+                {
+                    columns[c] = Convert.ToString((char)(Convert.ToInt32(c / 26) - 1 + 65)) + Convert.ToString((char)(c % 26 + 65));
+                }
+            }
 
-                    if (c <= 25)
+            try
+            {
+                object missingType = Type.Missing;
+                Microsoft.Office.Interop.Excel.Application objApp;
+                Microsoft.Office.Interop.Excel._Workbook objBook;
+                Microsoft.Office.Interop.Excel.Workbooks objBooks;
+                Microsoft.Office.Interop.Excel.Sheets objSheets;
+                Microsoft.Office.Interop.Excel._Worksheet objSheet;
+                Microsoft.Office.Interop.Excel.Range range = null;
+
+                objApp = new Microsoft.Office.Interop.Excel.Application();
+                objBooks = objApp.Workbooks;
+                objBook = objBooks.Add(Missing.Value);
+                objSheets = objBook.Worksheets;
+                objSheet = (Microsoft.Office.Interop.Excel._Worksheet)objSheets.get_Item(1);
+
+                if (captions)
+                {
+                    for (int c = 0; c < myDataGridView.ColumnCount; c++)
                     {
-                        num = c + 65;
-                        columns[c] = Convert.ToString((char)num);
-                    }
-                    else
-                    {
-                        columns[c] = Convert.ToString((char)(Convert.ToInt32(c / 26) - 1 + 65)) + Convert.ToString((char)(c % 26 + 65));
+                        range = objSheet.get_Range(columns[c] + "1", Missing.Value);
+                        range.set_Value(Missing.Value, headers[c]);
                     }
                 }
 
-                try
+                for (int i = 0; i < myDataGridView.RowCount - 1; i++)
                 {
-                    object missingType = Type.Missing;
-                    Microsoft.Office.Interop.Excel.Application objApp;
-                    Microsoft.Office.Interop.Excel._Workbook objBook;
-                    Microsoft.Office.Interop.Excel.Workbooks objBooks;
-                    Microsoft.Office.Interop.Excel.Sheets objSheets;
-                    Microsoft.Office.Interop.Excel._Worksheet objSheet;
-                    Microsoft.Office.Interop.Excel.Range range = null;
-
-                    objApp = new Microsoft.Office.Interop.Excel.Application();
-                    objBooks = objApp.Workbooks;
-                    objBook = objBooks.Add(Missing.Value);
-                    objSheets = objBook.Worksheets;
-                    objSheet = (Microsoft.Office.Interop.Excel._Worksheet)objSheets.get_Item(1);
-
-                    if (captions)
+                    for (int j = 0; j < myDataGridView.ColumnCount; j++)
                     {
-                        for (int c = 0; c < myDataGridView.ColumnCount; c++)
-                        {
-                            range = objSheet.get_Range(columns[c] + "1", Missing.Value);
-                            range.set_Value(Missing.Value, headers[c]);
-                        }
+                        range = objSheet.get_Range(columns[j] + Convert.ToString(i + 2),
+                            Missing.Value);
+                        range.set_Value(Missing.Value,
+                            myDataGridView.Rows[i].Cells[j].Value.ToString());
+
                     }
-
-                    for (int i = 0; i < myDataGridView.RowCount - 1; i++)
-                    {
-                        for (int j = 0; j < myDataGridView.ColumnCount; j++)
-                        {
-                            range = objSheet.get_Range(columns[j] + Convert.ToString(i + 2),
-                                Missing.Value);
-                            range.set_Value(Missing.Value,
-                                myDataGridView.Rows[i].Cells[j].Value.ToString());
-
-                        }
-                    }
-                    objApp.Visible = false;
-                    objApp.UserControl = false;
-                    objBook.SaveAs(@saveFileDialog.FileName,
-                        Microsoft.Office.Interop.Excel.XlFileFormat.xlWorkbookNormal,
-                        missingType, missingType, missingType, missingType,
-                        Microsoft.Office.Interop.Excel.XlSaveAsAccessMode.xlNoChange,
-                        missingType, missingType, missingType, missingType, missingType);
-
-                    objBook.Close(false, missingType, missingType);
-                    Cursor.Current = Cursors.Default;
-
-                    // Clean up
-                    ReleaseExcelObject(range);
-                    ReleaseExcelObject(objSheet);
-                    ReleaseExcelObject(objSheets);
-                    ReleaseExcelObject(objBook);
-                    ReleaseExcelObject(objBooks);
-                    ReleaseExcelObject(objApp);
-
-                    ModalessMsgBox("Save Success!!!");
                 }
-                catch (Exception theException)
-                {
-                    String errorMessage;
-                    errorMessage = "Error: ";
-                    errorMessage = String.Concat(errorMessage, theException.Message);
-                    errorMessage = String.Concat(errorMessage, " Line: ");
-                    errorMessage = String.Concat(errorMessage, theException.Source);
-                    ModalessMsgBox(errorMessage);
-                }
+                objApp.Visible = false;
+                objApp.UserControl = false;
+                objApp.DisplayAlerts = false;
+
+                objBook.SaveAs(System.Environment.CurrentDirectory + "\\" + testEnv.fileName + ".xls",
+                    Microsoft.Office.Interop.Excel.XlFileFormat.xlWorkbookNormal,
+                    missingType, missingType, missingType, missingType,
+                    Microsoft.Office.Interop.Excel.XlSaveAsAccessMode.xlNoChange,
+                    missingType, missingType, missingType, missingType, missingType);
+
+                objBook.Close(false, missingType, missingType);
+                Cursor.Current = Cursors.Default;
+
+                // Clean up
+                ReleaseExcelObject(range);
+                ReleaseExcelObject(objSheet);
+                ReleaseExcelObject(objSheets);
+                ReleaseExcelObject(objBook);
+                ReleaseExcelObject(objBooks);
+                ReleaseExcelObject(objApp);
+            }
+            catch (Exception theException)
+            {
+                String errorMessage;
+                errorMessage = "Error: ";
+                errorMessage = String.Concat(errorMessage, theException.Message);
+                errorMessage = String.Concat(errorMessage, " Line: ");
+                errorMessage = String.Concat(errorMessage, theException.Source);
+                ModalessMsgBox(errorMessage);
             }
         }
         private static void ReleaseExcelObject(object obj)
@@ -482,27 +554,54 @@ namespace SerialProgram
 
         void timer_Tick(object sender, EventArgs e)
         {
+#if DEBUG
+
+#else
             if (!serialPort1.IsOpen)
             {
                 testEnv.connected = false;
+                serialPort1.Close();
                 return;
             }
+#endif
+
+            if (sendCnt != recvCnt)
+            {
+                ModalessMsgBox("포트가 끊겼습니다.");
+                timer.Stop();
+
+                SetStatePortSetting();
+
+                return;
+            }
+
+            sendCnt++;
+
+#if DEBUG
+            recvCnt++;
+            string[] row = { DateTime.Now.ToString(), "1", "2.000"
+                               , "2.000", "2.000", "2.000", "2.000" };
+            SetDataToUI(row);
+
+            SaveTofile(true, dataGridView1);
+#endif
 
             // 시리얼데이터 버퍼 STX 1 / LocalID 2 / ETX 1
             byte[] buffer = new byte[4];
             // Start Byte
-            string token;
             buffer[0] = Rs232Utils.STX;
             // Local ID
-            token = "C";
-            buffer[1] = System.Text.Encoding.ASCII.GetBytes(token.ToCharArray())[0];
-            token = "0";
-            buffer[2] = System.Text.Encoding.ASCII.GetBytes(token.ToCharArray())[0];
+            buffer[1] = System.Text.Encoding.ASCII.GetBytes(testEnv.localId.ToCharArray())[0];
+            buffer[2] = System.Text.Encoding.ASCII.GetBytes(testEnv.localValue.ToCharArray())[0];
             // End Byte
             buffer[3] = Rs232Utils.ETX;
 
+#if DEBUG
+#else
             serialPort1.Write(buffer, 0, buffer.Length);
-            DisplayStatusbarMessage(string.Format("{0}, {1}byte를 보냈읍니다", buffer, buffer.Length));
+#endif
+            DisplayStatusbarMessage(string.Format("{0}, {1}byte를 보냈읍니다 SendCnt: {2}, RecvCnt: {3}"
+                , buffer.ToString(), buffer.Length, sendCnt, recvCnt));
 
             SendTextBox.Text += Rs232Utils.ByteArrayToHexString(buffer) + "\r\n";
         }
@@ -511,45 +610,34 @@ namespace SerialProgram
         {
             try
             {
-                FileDialog fileDlg = new OpenFileDialog();
-                fileDlg.InitialDirectory = System.Environment.CurrentDirectory;
-                fileDlg.Filter = "모든 파일 (*.*)|*.*";
-                fileDlg.RestoreDirectory = true;
-                if (fileDlg.ShowDialog() == DialogResult.OK)
+                // OLEDB를 이용한 엑셀 연결
+                string szConn = @"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + testEnv.fileName + ".xls" + ";Extended Properties='Excel 8.0;HDR=YES'";
+                OleDbConnection conn = new OleDbConnection(szConn);
+                conn.Open();
+
+                // 엑셀로부터 데이타 읽기
+                OleDbCommand cmd = new OleDbCommand("SELECT * FROM [Sheet1$]", conn);
+                OleDbDataAdapter adpt = new OleDbDataAdapter(cmd);
+                DataSet ds = new DataSet();
+                adpt.Fill(ds);
+
+                foreach (DataRow dr in ds.Tables[0].Rows)
                 {
-                    // OLEDB를 이용한 엑셀 연결
-                    string szConn = @"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + fileDlg.FileName + ";Extended Properties='Excel 8.0;HDR=YES'";
-                    OleDbConnection conn = new OleDbConnection(szConn);
-                    conn.Open();
-
-                    // 엑셀로부터 데이타 읽기
-                    OleDbCommand cmd = new OleDbCommand("SELECT * FROM [Sheet1$]", conn);
-                    OleDbDataAdapter adpt = new OleDbDataAdapter(cmd);
-                    DataSet ds = new DataSet();
-                    adpt.Fill(ds);
-
-                    foreach (DataRow dr in ds.Tables[0].Rows)
-                    {
-                        string[] row = { dr[0].ToString(), dr[1].ToString()
-                                           , dr[2].ToString(), dr[3].ToString()
-                                           , dr[4].ToString(), dr[5].ToString()
-                                           , dr[6].ToString() };
-                        SetDataToUI(row);
-                    }
+                    string[] row = { dr[0].ToString(), dr[1].ToString()
+                                        , dr[2].ToString(), dr[3].ToString()
+                                        , dr[4].ToString(), dr[5].ToString()
+                                        , dr[6].ToString() };
+                    SetDataToUI(row);
                 }
+
+                conn.Close();
             }
-            catch
+            catch(Exception e)
             {
-                ModalessMsgBox("중복되는 파일입니다. 파일을 다시한번확인해주세요");
+                ModalessMsgBox(e.Message);
             }
 
             return;
-        }
-        
-        private void dateTimePicker2_ValueChanged(object sender, EventArgs e)
-        {
-            testEnv.endTime = dateTimePickerEnd.Value;
-            testEnv.fileName = "ICCP " + dateTimePickerEnd.Value.ToString();
         }
 
         private void ModalessMsgBox(string msg)
@@ -603,6 +691,13 @@ namespace SerialProgram
             {
                 e.Handled = true;
             }
+        }
+
+        private void buttonViewer_Click(object sender, EventArgs e)
+        {
+            viewer = new FormViewer();
+            viewer.Owner = this;
+            viewer.Show();
         }
     }
 }

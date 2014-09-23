@@ -68,6 +68,8 @@ namespace SerialProgram
                                            , dr[6].ToString() };
                         SetDataToUI(row);
                     }
+
+                    this.Text = fileDlg.FileName;
                 }
             }
             catch
@@ -79,6 +81,18 @@ namespace SerialProgram
         }
         private void SetDataToUI(string[] data)
         {
+            string strGridTimestamp = data[0] != null ? data[0] : "NA";
+            string strGridTemperature = data[1] != null ? data[1] : "NA";
+            string strGridPH = data[2] != null ? data[2] : "NA";
+            string strGridSalt = data[3] != null ? data[3] : "NA";
+            string strGridOxgen = data[4] != null ? data[4] : "NA";
+            string strGridVolt = data[5] != null ? data[5] : "NA";
+            string strGridAmp = data[6] != null ? data[6] : "NA";
+
+            string[] gridData = {strGridTimestamp, strGridTemperature
+                , strGridPH, strGridSalt, strGridOxgen, strGridVolt, strGridAmp};
+            dataGridView1.Rows.Add(gridData);
+
             string strTimestamp = data[0] != null ? data[0] : "";
             string strTemperature = data[1] != null ? data[1] : "";
             string strPH = data[2] != null ? data[2] : "";
