@@ -70,6 +70,8 @@ namespace SerialProgram
                     }
 
                     this.Text = fileDlg.FileName;
+
+                    conn.Close();
                 }
             }
             catch

@@ -181,5 +181,16 @@ namespace SerialProgram
             byte[] StrByte = Encoding.ASCII.GetBytes(str);
             return StrByte;
         }
+        static public string ConvertHexToString(string HexValue)
+        {
+            // 16진수 -> 아스키코드
+            string StrValue = "";
+            while (HexValue.Length > 0)
+            {
+                StrValue += System.Convert.ToChar(System.Convert.ToUInt32(HexValue.Substring(0, 2), 16)).ToString();
+                HexValue = HexValue.Substring(2, HexValue.Length - 2);
+            }
+            return StrValue;
+        } 
     }
 }

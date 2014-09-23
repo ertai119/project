@@ -34,6 +34,7 @@ namespace SerialProgram
         public int delay { get; set; }
         public bool connected { get; set; }
         public bool working { get; set; }
+        public string appname { get; set; }
         public string descPort { get; set; }
         static public int PACKET_TOKEN_COUNT = 6;
         static public string NA = "N/A";
@@ -99,17 +100,17 @@ namespace SerialProgram
                     {
                         target = value;
                     }
-                    else if (token == "STX")
-                    {
-                        //string temp
-                    }
                     else if (token == "LOCAL_ID")
                     {
-                        localId = value;
+                        localId = value.ToUpper();
                     }
                     else if (token == "LOCAL_VALUE")
                     {
-                        localValue = value;
+                        localValue = value.ToUpper();
+                    }
+                    else if (token == "APP_NAME")
+                    {
+                        appname = value;
                     }
                 }
 
@@ -128,11 +129,12 @@ namespace SerialProgram
             {
                 StreamWriter sw = new StreamWriter(path, false, Encoding.UTF8);
 
-                sw.WriteLine("delay=" + delay.ToString());
-                sw.WriteLine("endTime=" + endTime.ToString());
-                sw.WriteLine("fileName=" + target);
-                sw.WriteLine("LOCAL_ID=" + localId);
-                sw.WriteLine("LOCAL_VALUE=" + localValue);
+                sw.WriteLine("DELAY=" + delay.ToString());
+                sw.WriteLine("ENDTIME=" + endTime.ToString());
+                sw.WriteLine("FILENAME=" + target);
+                sw.WriteLine("LOCAL_ID=" + localId.ToUpper());
+                sw.WriteLine("LOCAL_VALUE=" + localValue.ToUpper());
+                sw.WriteLine("APP_NAME=" + appname);
 
                 sw.Close();
             }

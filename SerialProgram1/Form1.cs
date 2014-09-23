@@ -39,10 +39,15 @@ namespace SerialProgram
 
             testEnv.InitFromFile();
             testEnv.SaveConfig();
+
+            this.Text = testEnv.appname;
+
             AdjustBtnText();
             timer.Tick += new EventHandler(timer_Tick);
 
-            radioButtonTemperature.Checked = true;
+            //radioButtonTemperature.Checked = true;
+            SetVisibleGraph(eGraphState.INVALID);
+            serialPort1.ReceivedBytesThreshold = 1;
 
             object[] AllGraph = { chartTemperature, chartSalt, chartOxgen, chartAmp, chartVolt, chartPH };
             foreach (System.Windows.Forms.DataVisualization.Charting.Chart chart in AllGraph)
@@ -185,16 +190,30 @@ namespace SerialProgram
 
         private void recvData(object sender, EventArgs e)
         {
-            string st = serialPort1.ReadExisting();
-            recieveSB += st;
-
-            if (recieveSB.Length < 26)
-                return;
-
-            char[] buffer = st.ToCharArray();
-            if (buffer[buffer.Length - 1] == Rs232Utils.RECV_ETX)
+            string str = "";
+            str = Convert.ToString(serialPort1.ReadByte(), 16).ToUpper();
+            if (str.Equals(Rs232Utils.ByteToHex(Rs232Utils.STX)))
             {
-                this.Invoke(new EventHandler(HandleReadData));
+                // Local ID MSB
+                str = Convert.ToString(serialPort1.ReadByte(), 16).ToUpper();
+                // Local ID LSB
+                str = Convert.ToString(serialPort1.ReadByte(), 16).ToUpper();
+                // Pay Load Length MSB + LSB
+                str = Convert.ToString(serialPort1.ReadByte(), 16) + Convert.ToString(serialPort1.ReadByte(), 16);
+                str = Rs232Utils.ConvertHexToString(str);
+                int payloadLength = Int32.Parse(str);
+
+                for (int i = 0; i < payloadLength; i++)
+                {
+                    str = Convert.ToString(serialPort1.ReadByte(), 16).ToUpper();
+                    recieveSB += Rs232Utils.ConvertHexToString(str);
+                }
+
+                str = Convert.ToString(serialPort1.ReadByte(), 16).ToUpper();
+                if (str.Equals(Rs232Utils.ByteToHex(Rs232Utils.ETX)))
+                {
+                    this.Invoke(new EventHandler(HandleReadData));
+                }
             }
         }
 
@@ -208,24 +227,15 @@ namespace SerialProgram
 
             // 누적 데이터를 없애고
             recieveSB = "";
-            recvCnt++;
 
             if (recieveData.Length <= 0)
                 return;
 
-            char[] chStr = recieveData.ToCharArray();
-            if (chStr[0] != Rs232Utils.RECV_ETX || chStr[chStr.Length - 1] != Rs232Utils.RECV_ETX)
-                return;
-
-            string token = "";
-            token += chStr[3];
-            token += chStr[4];
-
-            int payloadLength = Convert.ToInt32(token);
+            int payloadLength = recieveData.Length;
             if (payloadLength % 4 != 0)
                 return;
 
-            token = "";
+            string token = "";
             int receivedTokencount = payloadLength / 4;
             string[] datas = new string[TesterEnviorment.PACKET_TOKEN_COUNT];
             if (receivedTokencount > TesterEnviorment.PACKET_TOKEN_COUNT)
@@ -233,13 +243,21 @@ namespace SerialProgram
 
             for (int i = 0; i < receivedTokencount; i++)
             {
-                token += chStr[5 + i * 4];
-                token += chStr[5 + i * 4 + 1];
-                token += chStr[5 + i * 4 + 2];
-                token += chStr[5 + i * 4 + 3];
+                token += recieveData[i * 4];
+                token += recieveData[i * 4 + 1];
+                token += recieveData[i * 4 + 2];
+                token += recieveData[i * 4 + 3];
 
-                double value = Convert.ToDouble(token) / 1000;
-                datas[i] = string.Format("{0:0.000}", value);
+                if (token.Equals("NNNN"))
+                {
+                    datas[i] = "";
+                }
+                else
+                {
+                    double value = Convert.ToDouble(token) / 1000;
+                    datas[i] = string.Format("{0:0.000}", value);
+                }
+
                 token = "";
             }
 
@@ -248,6 +266,7 @@ namespace SerialProgram
                                , datas[2], datas[3], datas[4], datas[5] };
             SetDataToUI(row);
         }
+
         
         private void SetStateStartTest()
         {
@@ -298,8 +317,13 @@ namespace SerialProgram
                     testEnv.SaveConfig(); ;
                     InitGraph();
                     dataGridView1.Rows.Clear();
+
+                    SetStateStartTest();
                 }
-                
+                else
+                {
+                    ModalessMsgBox("설정이 올바르지 않습니다.");
+                }
 
                 AdjustBtnText();
             }
@@ -340,21 +364,34 @@ namespace SerialProgram
                         }
                         catch (Exception ex)
                         {
+                            testEnv.connected = false;
+
                             MessageBox.Show(ex.Message);
                         }
                     }
                 }
-                
-                if (testEnv.endTime > DateTime.Now)
+
+                if (testEnv.connected && testEnv.endTime > DateTime.Now)
                 {
                     if (MessageBox.Show("이전 테스트가 완료되지 못했습니다. 이어하시겠습니까?"
                         , "이어하기",MessageBoxButtons.YesNo, MessageBoxIcon.Question)
                         == DialogResult.Yes)
                     {
-                        // 이어하기
-                        LoadFromFile();
+                        try
+                        {
+                            // 이어하기
+                            LoadFromFile();
 
-                        SetStateStartTest();
+                            textBoxTarget.Text = testEnv.target;
+                            textBoxDelay.Text = testEnv.delay.ToString();
+                            textBoxEnd.Text = testEnv.endTime.ToString();
+
+                            SetStateStartTest();
+                        }
+                        catch(Exception ex)
+                        {
+                            ModalessMsgBox(ex.Message);
+                        }
                     }
                     else
                     {
