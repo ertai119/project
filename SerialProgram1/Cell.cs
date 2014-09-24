@@ -26,7 +26,7 @@ namespace SerialProgram
         {
             get
             {
-                return target + "_" + endTime.ToString("yyyy.MM.dd.HH.mm.ss");
+                return target + "_" + endTime.ToString("yyyy.MM.dd.HH.mm");
             }
         }
 

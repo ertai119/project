@@ -38,6 +38,18 @@ namespace SerialProgram
 
             SetVisibleGraph(eGraphState.TEMPERATURE);
         }
+        private void InitUIControl()
+        {
+            object[] AllGraph = { chartTemperature, chartPH, chartSalt, chartOxgen, chartVolt, chartAmp };
+            foreach (System.Windows.Forms.DataVisualization.Charting.Chart chart in AllGraph)
+            {
+                chart.Series[0].Points.Clear();
+            }
+
+            dataGridView1.Rows.Clear();
+
+            radioButtonTemperature.Checked = true;
+        }
 
         public void LoadFromFile()
         {
@@ -49,6 +61,8 @@ namespace SerialProgram
                 fileDlg.RestoreDirectory = true;
                 if (fileDlg.ShowDialog() == DialogResult.OK)
                 {
+                    InitUIControl();
+
                     // OLEDB를 이용한 엑셀 연결
                     string szConn = @"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + fileDlg.FileName + ";Extended Properties='Excel 8.0;HDR=YES'";
                     OleDbConnection conn = new OleDbConnection(szConn);
@@ -81,27 +95,38 @@ namespace SerialProgram
 
             return;
         }
+        private bool IsValidStr(string str)
+        {
+            if (str == null)
+                return false;
+
+            if (str == "NNNN" || str == "NA")
+                return false;
+
+            return true;
+        }
+
         private void SetDataToUI(string[] data)
         {
-            string strGridTimestamp = data[0] != null ? data[0] : "NA";
-            string strGridTemperature = data[1] != null ? data[1] : "NA";
-            string strGridPH = data[2] != null ? data[2] : "NA";
-            string strGridSalt = data[3] != null ? data[3] : "NA";
-            string strGridOxgen = data[4] != null ? data[4] : "NA";
-            string strGridVolt = data[5] != null ? data[5] : "NA";
-            string strGridAmp = data[6] != null ? data[6] : "NA";
+            string strGridTimestamp = IsValidStr(data[0]) ? data[0] : "NA";
+            string strGridTemperature = IsValidStr(data[1]) ? string.Format("{0:0.0}", Convert.ToDouble(data[1])) : "NA";
+            string strGridPH = IsValidStr(data[2]) ? string.Format("{0:0.0}", Convert.ToDouble(data[2])) : "NA";
+            string strGridSalt = IsValidStr(data[3]) ? string.Format("{0:0.0}", Convert.ToDouble(data[3])) : "NA";
+            string strGridOxgen = IsValidStr(data[4]) ? string.Format("{0:0.0}", Convert.ToDouble(data[4])) : "NA";
+            string strGridVolt = IsValidStr(data[5]) ? string.Format("{0:0.0}", Convert.ToDouble(data[5])) : "NA";
+            string strGridAmp = IsValidStr(data[6]) ? string.Format("{0:0.0}", Convert.ToDouble(data[6])) : "NA";
 
             string[] gridData = {strGridTimestamp, strGridTemperature
                 , strGridPH, strGridSalt, strGridOxgen, strGridVolt, strGridAmp};
             dataGridView1.Rows.Add(gridData);
 
-            string strTimestamp = data[0] != null ? data[0] : "";
-            string strTemperature = data[1] != null ? data[1] : "";
-            string strPH = data[2] != null ? data[2] : "";
-            string strSalt = data[3] != null ? data[3] : "";
-            string strOxgen = data[4] != null ? data[4] : "";
-            string strVolt = data[5] != null ? data[5] : "";
-            string strAmp = data[6] != null ? data[6] : "";
+            string strTimestamp = IsValidStr(data[0]) ? data[0] : "";
+            string strTemperature = IsValidStr(data[1]) ? data[1] : "";
+            string strPH = IsValidStr(data[2]) ? data[2] : "";
+            string strSalt = IsValidStr(data[3]) ? data[3] : "";
+            string strOxgen = IsValidStr(data[4]) ? data[4] : "";
+            string strVolt = IsValidStr(data[5]) ? data[5] : "";
+            string strAmp = IsValidStr(data[6]) ? data[6] : "";
 
             chartTemperature.Series[0].Points.AddXY(strTimestamp, strTemperature);
             chartPH.Series[0].Points.AddXY(strTimestamp, strPH);
