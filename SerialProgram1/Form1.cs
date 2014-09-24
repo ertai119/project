@@ -24,29 +24,42 @@ namespace SerialProgram
 
         private int sendCnt = 0;
         private int recvCnt = 0;
+        string[] preSaveRow;
 
         System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
+        System.Windows.Forms.Timer handShakeTimer = new System.Windows.Forms.Timer();
+
         TesterEnviorment testEnv = new SerialProgram.TesterEnviorment();
         FormViewer viewer;
 
         public Form1()
         {
-
             InitializeComponent();
             
             testEnv.descPort = Rs232Utils.PortDescString(serialPort1);
             DisplayStatusbarMessage(testEnv.descPort);
 
             testEnv.InitFromFile();
-            testEnv.SaveConfig();
+
+            dateTimeEnd.Format = DateTimePickerFormat.Custom;
+            dateTimeEnd.CustomFormat = "yyyy-MM-dd-HH:mm";
+
+            if (testEnv.EnableRunTest())
+            {
+                textBoxDelay.Text = testEnv.delay.ToString();
+                textBoxTarget.Text = testEnv.target;
+                dateTimeEnd.Value = Convert.ToDateTime(testEnv.endTime);
+            }
 
             this.Text = testEnv.appname;
 
             AdjustBtnText();
-            timer.Tick += new EventHandler(timer_Tick);
+            timer.Tick += new EventHandler(OnTimer);
 
-            //radioButtonTemperature.Checked = true;
-            SetVisibleGraph(eGraphState.INVALID);
+            handShakeTimer.Interval = 1000;
+            handShakeTimer.Tick += new EventHandler(OnTimerHandShake);
+
+            radioButtonTemperature.Checked = true;
             serialPort1.ReceivedBytesThreshold = 1;
 
             object[] AllGraph = { chartTemperature, chartSalt, chartOxgen, chartAmp, chartVolt, chartPH };
@@ -65,36 +78,52 @@ namespace SerialProgram
             }
         }
 
-        private void InitGraph()
+        private void InitUIControl()
         {
             object[] AllGraph = { chartTemperature, chartPH, chartSalt, chartOxgen, chartVolt, chartAmp };
             foreach (System.Windows.Forms.DataVisualization.Charting.Chart chart in AllGraph)
             {
                 chart.Series[0].Points.Clear();
             }
+
+            dataGridView1.Rows.Clear();
+
+            radioButtonTemperature.Checked = true;
         }
 
+        private bool IsValidStr(string str)
+        {
+            if (str == null)
+                return false;
+
+            if (str == "NNNN" || str == "NA")
+                return false;
+
+            return true;
+        }
         private void SetDataToUI(string[] data)
         {
-            string strGridTimestamp = data[0] != null ? data[0] : "NA";
-            string strGridTemperature = data[1] != null ? data[1] : "NA";
-            string strGridPH = data[2] != null ? data[2] : "NA";
-            string strGridSalt = data[3] != null ? data[3] : "NA";
-            string strGridOxgen = data[4] != null ? data[4] : "NA";
-            string strGridVolt = data[5] != null ? data[5] : "NA";
-            string strGridAmp = data[6] != null ? data[6] : "NA";
+            preSaveRow = data;
+
+            string strGridTimestamp = IsValidStr(data[0]) ? data[0] : "NA";
+            string strGridTemperature = IsValidStr(data[1]) ? string.Format("{0:0.0}", Convert.ToDouble(data[1])) : "NA";
+            string strGridPH = IsValidStr(data[2]) ? string.Format("{0:0.0}", Convert.ToDouble(data[2])) : "NA";
+            string strGridSalt = IsValidStr(data[3]) ? string.Format("{0:0.0}", Convert.ToDouble(data[3])) : "NA";
+            string strGridOxgen = IsValidStr(data[4]) ? string.Format("{0:0.0}", Convert.ToDouble(data[4])) : "NA";
+            string strGridVolt = IsValidStr(data[5]) ? string.Format("{0:0.0}", Convert.ToDouble(data[5])) : "NA";
+            string strGridAmp = IsValidStr(data[6]) ? string.Format("{0:0.0}", Convert.ToDouble(data[6])) : "NA";
 
             string[] gridData = {strGridTimestamp, strGridTemperature
                 , strGridPH, strGridSalt, strGridOxgen, strGridVolt, strGridAmp};
             dataGridView1.Rows.Add(gridData);
 
-            string strTimestamp = data[0] != null ? data[0] : "";
-            string strTemperature = data[1] != null ? data[1] : "";
-            string strPH = data[2] != null ? data[2] : "";
-            string strSalt = data[3] != null ? data[3] : "";
-            string strOxgen = data[4] != null ? data[4] : "";
-            string strVolt = data[5] != null ? data[5] : "";
-            string strAmp = data[6] != null ? data[6] : "";
+            string strTimestamp = IsValidStr(data[0]) ? data[0] : "";
+            string strTemperature = IsValidStr(data[1]) ? data[1] : "";
+            string strPH = IsValidStr(data[2]) ? data[2] : "";
+            string strSalt = IsValidStr(data[3]) ? data[3] : "";
+            string strOxgen = IsValidStr(data[4]) ? data[4] : "";
+            string strVolt = IsValidStr(data[5]) ? data[5] : "";
+            string strAmp = IsValidStr(data[6]) ? data[6] : "";
 
             chartTemperature.Series[0].Points.AddXY(strTimestamp, strTemperature);
             chartPH.Series[0].Points.AddXY(strTimestamp, strPH);
@@ -254,15 +283,15 @@ namespace SerialProgram
                 }
                 else
                 {
-                    double value = Convert.ToDouble(token) / 1000;
-                    datas[i] = string.Format("{0:0.000}", value);
+                    double value = Convert.ToDouble(token);
+                    datas[i] = string.Format("{0:0.0}", value);
                 }
 
                 token = "";
             }
 
             //수조온도	pH농도	염도	용존산소량	음극전위, 양극전류
-            string[] row = { DateTime.Now.ToString(), datas[0], datas[1]
+            string[] row = { DateTime.Now.ToString(dateTimeEnd.CustomFormat), datas[0], datas[1]
                                , datas[2], datas[3], datas[4], datas[5] };
             SetDataToUI(row);
         }
@@ -282,7 +311,10 @@ namespace SerialProgram
             timer.Interval = testEnv.delay * 1000 * 60;
 #endif
             timer.Start();
-            ModalessMsgBox("시험 시작");
+
+            textBoxTarget.Enabled = false;
+            textBoxDelay.Enabled = false;
+            dateTimeEnd.Enabled = false;
 
             AdjustBtnText();
         }
@@ -293,30 +325,29 @@ namespace SerialProgram
 
             timer.Stop();
 
+            textBoxTarget.Enabled = true;
+            textBoxDelay.Enabled = true;
+            dateTimeEnd.Enabled = true;
+
             AdjustBtnText();
         }
 
         private void SetStateTestSetting()
         {
+            testEnv.target = textBoxTarget.Text;
+            testEnv.delay = Convert.ToInt32(textBoxDelay.Text.ToString());
+            testEnv.endTime = dateTimeEnd.Value;
+
+            textBoxTarget.Text = testEnv.target;
+            textBoxDelay.Text = testEnv.delay.ToString();
+            dateTimeEnd.Value = testEnv.endTime;
+
             using (TesterSettingDialog tsd = new TesterSettingDialog())
             {
-                tsd.Owner = this;
-                if (tsd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                {
-                    testEnv.target = tsd.target;
-                    testEnv.delay = tsd.delay;
-                    testEnv.endTime = Convert.ToDateTime(tsd.endTime);
-
-                    textBoxTarget.Text = testEnv.target;
-                    textBoxDelay.Text = testEnv.delay.ToString();
-                    textBoxEnd.Text = testEnv.endTime.ToString();
-                }
-
                 if (testEnv.EnableRunTest())
                 {
                     testEnv.SaveConfig(); ;
-                    InitGraph();
-                    dataGridView1.Rows.Clear();
+                    InitUIControl();
 
                     SetStateStartTest();
                 }
@@ -333,112 +364,166 @@ namespace SerialProgram
         {
             testEnv.connected = false;
             testEnv.working = false;
-            
+
             timer.Stop();
+            handShakeTimer.Stop();
 
             AdjustBtnText();
+        }
+        private void buttonPortSetting_Click(object sender, EventArgs e)
+        {
+            using (ComportSettingDialog csd = new ComportSettingDialog())
+            {
+                csd.Owner = this;
+                csd.PortDescString = testEnv.descPort;
+                if (csd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    if (serialPort1.IsOpen)
+                    {
+                        testEnv.connected = false;
+                        serialPort1.Close();
+                    }
+
+                    Rs232Utils.SetPortDescString(serialPort1, csd.PortDescString);
+                    testEnv.descPort = csd.PortDescString;
+
+                    try
+                    {
+#if !DEBUG
+                        serialPort1.Open();
+#endif
+                        DisplayStatusbarMessage(testEnv.descPort);
+
+                        testEnv.connected = true;
+                        sendCnt = 0;
+                        recvCnt = 0;
+
+                        AdjustBtnText();
+                    }
+                    catch (Exception ex)
+                    {
+                        testEnv.connected = false;
+
+                        MessageBox.Show(ex.Message);
+                    }
+                }
+            }
+        }
+        private void UpdateTestEnv()
+        {
+            testEnv.delay = Convert.ToInt32(textBoxDelay.Text);
+            testEnv.endTime = dateTimeEnd.Value;
+            testEnv.target = textBoxTarget.Text;
+
+            testEnv.SaveConfig();
         }
 
         //데이터를 보내기
         private void btnStart_Click(object sender, EventArgs e)
         {
-            if (testEnv.connected == false)
+            if (testEnv.working == false)
             {
-                using (ComportSettingDialog csd = new ComportSettingDialog())
-                {
-                    csd.Owner = this;
-                    csd.PortDescString = testEnv.descPort;
-                    if (csd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                    {
-                        Rs232Utils.SetPortDescString(serialPort1, csd.PortDescString);
-                        testEnv.descPort = csd.PortDescString;
+                string preFileName = testEnv.fileName;
+                UpdateTestEnv();
+                string curFileName = testEnv.fileName;
 
-                        try
-                        {
-#if !DEBUG
-                            serialPort1.Open();
-#endif
-                            testEnv.connected = true;
+                bool bContinue = preFileName.Equals(curFileName);
 
-                            AdjustBtnText();
-                        }
-                        catch (Exception ex)
-                        {
-                            testEnv.connected = false;
-
-                            MessageBox.Show(ex.Message);
-                        }
-                    }
-                }
-
-                if (testEnv.connected && testEnv.endTime > DateTime.Now)
+                if (testEnv.connected && bContinue && testEnv.EnableRunTest())
                 {
                     if (MessageBox.Show("이전 테스트가 완료되지 못했습니다. 이어하시겠습니까?"
-                        , "이어하기",MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+                        , "이어하기", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
                         == DialogResult.Yes)
                     {
                         try
                         {
+                            InitUIControl();
+
                             // 이어하기
                             LoadFromFile();
 
                             textBoxTarget.Text = testEnv.target;
                             textBoxDelay.Text = testEnv.delay.ToString();
-                            textBoxEnd.Text = testEnv.endTime.ToString();
-
+                            dateTimeEnd.Value = testEnv.endTime;
                             SetStateStartTest();
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
                             ModalessMsgBox(ex.Message);
                         }
                     }
                     else
                     {
-                        InitGraph();
-                        dataGridView1.Rows.Clear();
+                        InitUIControl();
 
                         testEnv.target = "";
                     }
-                }
 
-                return;
+                    return;
+                }
             }
 
             if (testEnv.connected)
             {
                 if (testEnv.working)
                 {
-                    if (MessageBox.Show("시험을 종료하시겠습니까?"
-                        , "시험 종료", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+                    if (MessageBox.Show("기록을 종료하시겠습니까?"
+                        , "기록 종료", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
                         == DialogResult.Yes)
                     {
                         SetStateStopTest();
-                        testEnv.target = "";
                     }
 
                     return;
                 }
 
-                if (!testEnv.EnableRunTest())
+                UpdateTestEnv();
+                
+                if (testEnv.EnableRunTest())
                 {
-                    SetStateTestSetting();
+                    if (MessageBox.Show("기록을 시작하시겠습니까?"
+                        , "기록 시작", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+                        == DialogResult.Yes)
+                    {
+                        InitUIControl();
+
+                        SetStateStartTest();
+                    }
+
                     return;
                 }
                 else
                 {
-                    SetStateStartTest();
+                    ModalessMsgBox("기록 설정이 잘못 되었습니다.");
                     return;
                 }
             }
+            else
+            {
+                if (testEnv.working == false)
+                {
+                    ModalessMsgBox("포트가 연결되지 않았습니다.");
+                }
+                else
+                {
+                    if (MessageBox.Show("기록을 종료하시겠습니까?"
+                        , "기록 종료", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+                        == DialogResult.Yes)
+                    {
+                        SetStateStopTest();
+                    }
 
-            
+                    return;
+                }
+
+                return;
+            }
         }
         private void AdjustBtnText()
         {
-            if (testEnv.connected == false)
+            if (testEnv.connected == false && testEnv.working == false)
             {
-                btnStart.Text = "포트 설정";
+                btnStart.Text = "기록 시작";
                 return;
             }
 
@@ -446,21 +531,14 @@ namespace SerialProgram
             {
                 if (testEnv.working)
                 {
-                    btnStart.Text = "시험 종료";
-                    return;
-                }
-
-                if (!testEnv.EnableRunTest())
-                {
-                    btnStart.Text = "시험 환경 설정";
+                    btnStart.Text = "기록 종료";
                     return;
                 }
                 else
                 {
-                    btnStart.Text = "시험 시작";
+                    btnStart.Text = "기록 시작";
                     return;
                 }
-
             }
         }
 
@@ -470,6 +548,22 @@ namespace SerialProgram
             {
                 testEnv.connected = false;
                 serialPort1.Close();
+            }
+        }
+
+        private void textBoxDelay_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!(Char.IsDigit(e.KeyChar) || e.KeyChar == Convert.ToChar(Keys.Back)))
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void textBoxTarget_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!(Char.IsLetterOrDigit(e.KeyChar) || e.KeyChar == Convert.ToChar(Keys.Back)))
+            {
+                e.Handled = true;
             }
         }
 
@@ -500,7 +594,7 @@ namespace SerialProgram
                     columns[c] = Convert.ToString((char)(Convert.ToInt32(c / 26) - 1 + 65)) + Convert.ToString((char)(c % 26 + 65));
                 }
             }
-
+            
             try
             {
                 object missingType = Type.Missing;
@@ -589,7 +683,24 @@ namespace SerialProgram
             }
         }
 
-        void timer_Tick(object sender, EventArgs e)
+        
+        void OnTimerHandShake(object sender, EventArgs e)
+        {
+            if (sendCnt != recvCnt)
+            {
+                ModalessMsgBox("포트가 끊겼습니다.");
+                testEnv.connected = false;
+                AdjustBtnText();
+
+                preSaveRow[0] = DateTime.Now.ToString(dateTimeEnd.CustomFormat);
+
+                SetDataToUI(preSaveRow);
+                SaveTofile(true, dataGridView1);
+            }
+
+            handShakeTimer.Stop();
+        }
+        void OnTimer(object sender, EventArgs e)
         {
 #if DEBUG
 
@@ -601,23 +712,25 @@ namespace SerialProgram
                 return;
             }
 #endif
-
             if (sendCnt != recvCnt)
             {
-                ModalessMsgBox("포트가 끊겼습니다.");
-                timer.Stop();
+                preSaveRow[0] = DateTime.Now.ToString(dateTimeEnd.CustomFormat);
 
-                SetStatePortSetting();
+                SetDataToUI(preSaveRow);
+                SaveTofile(true, dataGridView1);
 
                 return;
             }
 
+
             sendCnt++;
 
+            handShakeTimer.Start();
+
 #if DEBUG
-            recvCnt++;
-            string[] row = { DateTime.Now.ToString(), "1", "2.000"
-                               , "2.000", "2.000", "2.000", "2.000" };
+            //recvCnt++;
+            string[] row = { DateTime.Now.ToString(dateTimeEnd.CustomFormat), "1", "2.000"
+                               , "NNNN", "NNNN", "2.000", "2.000" };
             SetDataToUI(row);
 
             SaveTofile(true, dataGridView1);
@@ -722,20 +835,13 @@ namespace SerialProgram
             SetVisibleGraph(eGraphState.VOLT);
         }
 
-        private void textBoxDelay_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (!(Char.IsDigit(e.KeyChar) || e.KeyChar == Convert.ToChar(Keys.Back)))
-            {
-                e.Handled = true;
-            }
-        }
-
         private void buttonViewer_Click(object sender, EventArgs e)
         {
             viewer = new FormViewer();
             viewer.Owner = this;
             viewer.Show();
         }
+
     }
 }
 

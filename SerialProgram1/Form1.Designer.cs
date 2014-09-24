@@ -80,12 +80,15 @@
             this.Column7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.RecvTextBox = new System.Windows.Forms.TextBox();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.textBoxEnd = new System.Windows.Forms.TextBox();
+
             this.textBoxTarget = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.textBoxDelay = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
+
+            this.dateTimeEnd = new System.Windows.Forms.DateTimePicker();
+            this.label6 = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
             this.btnStart = new System.Windows.Forms.Button();
             this.SendTextBox = new System.Windows.Forms.TextBox();
             this.lblMsg = new System.Windows.Forms.StatusStrip();
@@ -120,14 +123,19 @@
             this.chartAmp.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.chartAmp.BorderSkin.PageColor = System.Drawing.Color.Gray;
+            chartArea1.AxisX.LineColor = System.Drawing.Color.DarkGray;
+            chartArea1.AxisY.LineColor = System.Drawing.Color.DarkGray;
             chartArea1.Name = "ChartArea1";
             this.chartAmp.ChartAreas.Add(chartArea1);
             legend1.Name = "Legend1";
             this.chartAmp.Legends.Add(legend1);
             this.chartAmp.Location = new System.Drawing.Point(775, 12);
             this.chartAmp.Name = "chartAmp";
+            series1.BorderWidth = 3;
             series1.ChartArea = "ChartArea1";
             series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series1.Color = System.Drawing.Color.Blue;
             series1.EmptyPointStyle.BorderWidth = 3;
             series1.Legend = "Legend1";
             series1.Name = "양극전류";
@@ -147,8 +155,10 @@
             this.chartVolt.Legends.Add(legend2);
             this.chartVolt.Location = new System.Drawing.Point(775, 12);
             this.chartVolt.Name = "chartVolt";
+            series2.BorderWidth = 3;
             series2.ChartArea = "ChartArea1";
             series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series2.Color = System.Drawing.Color.Blue;
             series2.Legend = "Legend1";
             series2.Name = "음극전위";
             this.chartVolt.Series.Add(series2);
@@ -167,8 +177,10 @@
             this.chartOxgen.Legends.Add(legend3);
             this.chartOxgen.Location = new System.Drawing.Point(775, 12);
             this.chartOxgen.Name = "chartOxgen";
+            series3.BorderWidth = 3;
             series3.ChartArea = "ChartArea1";
             series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series3.Color = System.Drawing.Color.Blue;
             series3.Legend = "Legend1";
             series3.Name = "용존산소량";
             this.chartOxgen.Series.Add(series3);
@@ -187,8 +199,10 @@
             this.chartSalt.Legends.Add(legend4);
             this.chartSalt.Location = new System.Drawing.Point(775, 12);
             this.chartSalt.Name = "chartSalt";
+            series4.BorderWidth = 3;
             series4.ChartArea = "ChartArea1";
             series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series4.Color = System.Drawing.Color.Blue;
             series4.Legend = "Legend1";
             series4.Name = "염도";
             this.chartSalt.Series.Add(series4);
@@ -207,8 +221,10 @@
             this.chartPH.Legends.Add(legend5);
             this.chartPH.Location = new System.Drawing.Point(775, 12);
             this.chartPH.Name = "chartPH";
+            series5.BorderWidth = 3;
             series5.ChartArea = "ChartArea1";
             series5.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series5.Color = System.Drawing.Color.Blue;
             series5.Legend = "Legend1";
             series5.Name = "PH";
             this.chartPH.Series.Add(series5);
@@ -227,8 +243,10 @@
             this.chartTemperature.Legends.Add(legend6);
             this.chartTemperature.Location = new System.Drawing.Point(775, 12);
             this.chartTemperature.Name = "chartTemperature";
+            series6.BorderWidth = 3;
             series6.ChartArea = "ChartArea1";
             series6.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series6.Color = System.Drawing.Color.Blue;
             series6.Legend = "Legend1";
             series6.Name = "온도";
             this.chartTemperature.Series.Add(series6);
@@ -326,9 +344,10 @@
             // 
             // buttonViewer
             // 
-            this.buttonViewer.Location = new System.Drawing.Point(458, 17);
+
+            this.buttonViewer.Location = new System.Drawing.Point(502, 5);
             this.buttonViewer.Name = "buttonViewer";
-            this.buttonViewer.Size = new System.Drawing.Size(100, 70);
+            this.buttonViewer.Size = new System.Drawing.Size(113, 76);
             this.buttonViewer.TabIndex = 17;
             this.buttonViewer.Text = "뷰어열기";
             this.buttonViewer.UseVisualStyleBackColor = true;
@@ -432,74 +451,89 @@
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.textBoxEnd);
             this.panel1.Controls.Add(this.textBoxTarget);
             this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.textBoxDelay);
             this.panel1.Controls.Add(this.label5);
-            this.panel1.Controls.Add(this.label1);
+
+            this.panel1.Controls.Add(this.dateTimeEnd);
+            this.panel1.Controls.Add(this.label6);
+            this.panel1.Controls.Add(this.button1);
             this.panel1.Controls.Add(this.btnStart);
+            this.panel1.Controls.Add(this.buttonViewer);
             this.panel1.Location = new System.Drawing.Point(2, 9);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(450, 89);
+            this.panel1.Size = new System.Drawing.Size(741, 89);
             this.panel1.TabIndex = 13;
-            // 
-            // textBoxEnd
-            // 
-            this.textBoxEnd.Enabled = false;
-            this.textBoxEnd.Location = new System.Drawing.Point(285, 63);
-            this.textBoxEnd.MaxLength = 3;
-            this.textBoxEnd.Name = "textBoxEnd";
-            this.textBoxEnd.Size = new System.Drawing.Size(142, 21);
-            this.textBoxEnd.TabIndex = 14;
             // 
             // textBoxTarget
             // 
-            this.textBoxTarget.Enabled = false;
-            this.textBoxTarget.Location = new System.Drawing.Point(285, 16);
-            this.textBoxTarget.MaxLength = 3;
+            this.textBoxTarget.Location = new System.Drawing.Point(292, 12);
+            this.textBoxTarget.MaxLength = 255;
             this.textBoxTarget.Name = "textBoxTarget";
             this.textBoxTarget.Size = new System.Drawing.Size(142, 21);
-            this.textBoxTarget.TabIndex = 13;
+            this.textBoxTarget.TabIndex = 25;
+            this.textBoxTarget.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxTarget_KeyPress);
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(192, 21);
+
+            this.label3.Location = new System.Drawing.Point(199, 17);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(69, 12);
-            this.label3.TabIndex = 12;
-            this.label3.Text = "테스터 대상";
+            this.label3.Size = new System.Drawing.Size(77, 12);
+            this.label3.TabIndex = 24;
+            this.label3.Text = "저장화일이름";
             this.label3.TextAlign = System.Drawing.ContentAlignment.BottomRight;
             // 
             // textBoxDelay
             // 
-            this.textBoxDelay.Enabled = false;
-            this.textBoxDelay.Location = new System.Drawing.Point(285, 41);
+
+            this.textBoxDelay.Location = new System.Drawing.Point(292, 37);
             this.textBoxDelay.MaxLength = 3;
             this.textBoxDelay.Name = "textBoxDelay";
             this.textBoxDelay.Size = new System.Drawing.Size(34, 21);
-            this.textBoxDelay.TabIndex = 11;
+            this.textBoxDelay.TabIndex = 23;
+            this.textBoxDelay.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxDelay_KeyPress);
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(191, 71);
+
+            this.label5.Location = new System.Drawing.Point(198, 67);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(53, 12);
-            this.label5.TabIndex = 10;
+            this.label5.TabIndex = 21;
             this.label5.Text = "종료일시";
             this.label5.TextAlign = System.Drawing.ContentAlignment.BottomRight;
             // 
-            // label1
+            // dateTimeEnd
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(192, 46);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(91, 12);
-            this.label1.TabIndex = 10;
-            this.label1.Text = "데이터 주기(분)";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.BottomRight;
+            this.dateTimeEnd.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+            this.dateTimeEnd.Location = new System.Drawing.Point(291, 61);
+            this.dateTimeEnd.Name = "dateTimeEnd";
+            this.dateTimeEnd.Size = new System.Drawing.Size(200, 21);
+            this.dateTimeEnd.TabIndex = 20;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(199, 42);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(79, 12);
+            this.label6.TabIndex = 22;
+            this.label6.Text = "저장 간격(분)";
+            this.label6.TextAlign = System.Drawing.ContentAlignment.BottomRight;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(619, 5);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(119, 76);
+            this.button1.TabIndex = 15;
+            this.button1.Text = "포트 설정";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.buttonPortSetting_Click);
             // 
             // btnStart
             // 
@@ -553,7 +587,6 @@
             this.Controls.Add(this.chartPH);
             this.Controls.Add(this.chartTemperature);
             this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.buttonViewer);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.RecvTextBox);
             this.Controls.Add(this.panel1);
@@ -601,15 +634,9 @@
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.TextBox RecvTextBox;
         private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.TextBox textBoxTarget;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox textBoxDelay;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button btnStart;
         private System.Windows.Forms.TextBox SendTextBox;
         private System.Windows.Forms.StatusStrip lblMsg;
-        private System.Windows.Forms.TextBox textBoxEnd;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column1;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column4;
@@ -618,6 +645,13 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Column3;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column6;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column7;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.TextBox textBoxTarget;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox textBoxDelay;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.DateTimePicker dateTimeEnd;
+        private System.Windows.Forms.Label label6;
     }
 }
 
