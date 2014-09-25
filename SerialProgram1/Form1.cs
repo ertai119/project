@@ -287,8 +287,16 @@ namespace SerialProgram
                 }
                 else
                 {
-                    double value = Convert.ToDouble(token);
-                    datas[i] = string.Format("{0:0.0}", value);
+                    if (token.Length >= 2)
+                    {
+                        string value = token.Insert(token.Length - 1, ".");
+                        datas[i] = value;
+                    }
+                    else
+                    {
+                        datas[i] = token;
+                    }
+                    
                 }
 
                 token = "";
@@ -300,6 +308,8 @@ namespace SerialProgram
             SetDataToUI(row);
 
             SaveTofile(dataGridView1);
+
+            DisplayStatusbarMessage(string.Format("SendCnt: {0}, RecvCnt: {1}", sendCnt, recvCnt));
         }
 
         
@@ -450,9 +460,9 @@ namespace SerialProgram
 
                 if (testEnv.connected && bContinue && testEnv.EnableRunTest())
                 {
-                    if (MessageBox.Show("이전 테스트가 완료되지 못했습니다. 이어하시겠습니까?"
-                        , "이어하기", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
-                        == DialogResult.Yes)
+                    DialogResult ret = MessageBox.Show("이전 테스트가 완료되지 못했습니다. 이어하시겠습니까?"
+                        , "이어하기", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    if (ret == DialogResult.Yes)
                     {
                         try
                         {
@@ -476,6 +486,12 @@ namespace SerialProgram
                         InitUIControl();
 
                         testEnv.target = "";
+                        testEnv.delay = 0;
+                        testEnv.endTime = DateTime.Now;
+
+                        textBoxTarget.Text = testEnv.target;
+                        textBoxDelay.Text = testEnv.delay.ToString();
+                        dateTimeEnd.Value = testEnv.endTime;
                     }
 
                     return;
@@ -563,6 +579,13 @@ namespace SerialProgram
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
+            if (MessageBox.Show("정말 종료하시겠습니까?", "Exit",
+                MessageBoxButtons.YesNo) == DialogResult.No)
+            {
+                e.Cancel = true;
+                return;
+            }
+
             if (serialPort1.IsOpen)
             {
                 testEnv.connected = false;
@@ -700,6 +723,9 @@ namespace SerialProgram
 
             if (sendCnt != recvCnt)
             {
+                if (preSaveRow == null)
+                    return;
+
                 preSaveRow[0] = DateTime.Now.ToString(dateTimeEnd.CustomFormat);
 
                 SetDataToUI(preSaveRow);
@@ -714,7 +740,6 @@ namespace SerialProgram
 
         private void SendPacket()
         {
-
             sendCnt++;
 
             handShakeTimer.Start();
@@ -744,8 +769,7 @@ namespace SerialProgram
                 serialPort1.Write(buffer, 0, buffer.Length);
             }
 
-            DisplayStatusbarMessage(string.Format("{0}, {1}byte를 보냈읍니다 SendCnt: {2}, RecvCnt: {3}"
-                , buffer.ToString(), buffer.Length, sendCnt, recvCnt));
+            DisplayStatusbarMessage(string.Format("SendCnt: {0}, RecvCnt: {1}", sendCnt, recvCnt));
 
             SendTextBox.Text += Rs232Utils.ByteArrayToHexString(buffer) + "\r\n";
         }
