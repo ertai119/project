@@ -406,7 +406,7 @@ namespace SerialProgram
 
                     try
                     {
-                        if (TesterEnviorment.DEBUG_MODE != 0)
+                        if (TesterEnviorment.DEBUG_MODE != 1)
                         {
                             serialPort1.Open();
                         }
