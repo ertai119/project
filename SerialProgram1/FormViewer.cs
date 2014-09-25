@@ -6,7 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using System.Data.OleDb;
+using System.IO;
 using System.Threading;
 
 namespace SerialProgram
@@ -63,29 +63,42 @@ namespace SerialProgram
                 {
                     InitUIControl();
 
-                    // OLEDB를 이용한 엑셀 연결
-                    string szConn = @"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + fileDlg.FileName + ";Extended Properties='Excel 8.0;HDR=YES'";
-                    OleDbConnection conn = new OleDbConnection(szConn);
-                    conn.Open();
+                    StreamReader sr = new StreamReader(fileDlg.FileName, Encoding.UTF8);
 
-                    // 엑셀로부터 데이타 읽기
-                    OleDbCommand cmd = new OleDbCommand("SELECT * FROM [Sheet1$]", conn);
-                    OleDbDataAdapter adpt = new OleDbDataAdapter(cmd);
-                    DataSet ds = new DataSet();
-                    adpt.Fill(ds);
-
-                    foreach (DataRow dr in ds.Tables[0].Rows)
+                    try
                     {
-                        string[] row = { dr[0].ToString(), dr[1].ToString()
-                                           , dr[2].ToString(), dr[3].ToString()
-                                           , dr[4].ToString(), dr[5].ToString()
-                                           , dr[6].ToString() };
-                        SetDataToUI(row);
+                        int i = 0;
+                        while (!sr.EndOfStream)
+                        {
+                            string s = sr.ReadLine();
+                            if (i == 0)
+                            {
+                                i++;
+                                continue;
+                            }
+
+                            string[] dr = s.Split(',');        // Split() 메서드를 이용하여 ',' 구분하여 잘라냄
+
+                            string[] row = { dr[0].ToString(), dr[1].ToString()
+                                                , dr[2].ToString(), dr[3].ToString()
+                                                , dr[4].ToString(), dr[5].ToString()
+                                                , dr[6].ToString() };
+                            SetDataToUI(row);
+
+                        }
+                    }
+                    catch(Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                        return;
+                    }
+                    finally
+                    {
+                        if (sr != null)
+                            sr.Close();
                     }
 
                     this.Text = fileDlg.FileName;
-
-                    conn.Close();
                 }
             }
             catch

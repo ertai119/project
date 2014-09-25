@@ -96,13 +96,16 @@ namespace SerialProgram
             if (str == null)
                 return false;
 
-            if (str == "NNNN" || str == "NA")
+            if (str == "" || str == "NNNN" || str == "NA")
                 return false;
 
             return true;
         }
         private void SetDataToUI(string[] data)
         {
+            if (data == null)
+                return;
+
             preSaveRow = data;
 
             string strGridTimestamp = IsValidStr(data[0]) ? data[0] : "NA";
@@ -256,6 +259,7 @@ namespace SerialProgram
 
             // 누적 데이터를 없애고
             recieveSB = "";
+            recvCnt++;
 
             if (recieveData.Length <= 0)
                 return;
@@ -294,6 +298,8 @@ namespace SerialProgram
             string[] row = { DateTime.Now.ToString(dateTimeEnd.CustomFormat), datas[0], datas[1]
                                , datas[2], datas[3], datas[4], datas[5] };
             SetDataToUI(row);
+
+            SaveTofile(dataGridView1);
         }
 
         
@@ -305,12 +311,21 @@ namespace SerialProgram
 
             sendCnt = 0;
             recvCnt = 0;
-#if DEBUG
-            timer.Interval = 5 * 1000;
-#else
-            timer.Interval = testEnv.delay * 1000 * 60;
-#endif
-            timer.Start();
+
+            if (TesterEnviorment.DEBUG_MODE == 1)
+            {
+                timer.Interval = 5 * 1000;
+            }
+            else if(TesterEnviorment.DEBUG_MODE == 2)
+            {
+                timer.Interval = 5 * 1000;
+                timer.Start(); 
+            }
+            else
+            {
+                timer.Interval = testEnv.delay * 1000 * 60;
+                timer.Start();
+            }
 
             textBoxTarget.Enabled = false;
             textBoxDelay.Enabled = false;
@@ -391,9 +406,11 @@ namespace SerialProgram
 
                     try
                     {
-#if !DEBUG
-                        serialPort1.Open();
-#endif
+                        if (TesterEnviorment.DEBUG_MODE != 0)
+                        {
+                            serialPort1.Open();
+                        }
+
                         DisplayStatusbarMessage(testEnv.descPort);
 
                         testEnv.connected = true;
@@ -413,7 +430,7 @@ namespace SerialProgram
         }
         private void UpdateTestEnv()
         {
-            testEnv.delay = Convert.ToInt32(textBoxDelay.Text);
+            testEnv.delay = textBoxDelay.Text != "" ? Convert.ToInt32(textBoxDelay.Text) : 0;
             testEnv.endTime = dateTimeEnd.Value;
             testEnv.target = textBoxTarget.Text;
 
@@ -568,102 +585,71 @@ namespace SerialProgram
                 e.Handled = true;
             }
         }
-
-        private void buttonSaveFile_Click(object sender, EventArgs e)
-        {
-            SaveTofile(true, dataGridView1);
-        }
-
+        
         private SaveFileDialog saveFileDialog = new SaveFileDialog();
-        public void SaveTofile(bool captions, DataGridView myDataGridView)
+        public void SaveTofile(DataGridView myDataGridView)
         {
-            int num = 0;
-
-            string[] headers = new string[myDataGridView.ColumnCount];
-            string[] columns = new string[myDataGridView.ColumnCount];
-
-            for (int c = 0; c < myDataGridView.ColumnCount; c++)
+            //test to see if the DataGridView has any rows
+            if (myDataGridView.RowCount > 0)
             {
-                headers[c] = myDataGridView.Rows[0].Cells[c].OwningColumn.HeaderText.ToString();
-
-                if (c <= 25)
+                try
                 {
-                    num = c + 65;
-                    columns[c] = Convert.ToString((char)num);
-                }
-                else
-                {
-                    columns[c] = Convert.ToString((char)(Convert.ToInt32(c / 26) - 1 + 65)) + Convert.ToString((char)(c % 26 + 65));
-                }
-            }
-            
-            try
-            {
-                object missingType = Type.Missing;
-                Microsoft.Office.Interop.Excel.Application objApp;
-                Microsoft.Office.Interop.Excel._Workbook objBook;
-                Microsoft.Office.Interop.Excel.Workbooks objBooks;
-                Microsoft.Office.Interop.Excel.Sheets objSheets;
-                Microsoft.Office.Interop.Excel._Worksheet objSheet;
-                Microsoft.Office.Interop.Excel.Range range = null;
+                    string value = "";
+                    DataGridViewRow dr = new DataGridViewRow();
+                    StreamWriter swOut = new StreamWriter(
+                        System.Environment.CurrentDirectory + "\\" + testEnv.fileName + ".csv", false, Encoding.UTF8);
 
-                objApp = new Microsoft.Office.Interop.Excel.Application();
-                objBooks = objApp.Workbooks;
-                objBook = objBooks.Add(Missing.Value);
-                objSheets = objBook.Worksheets;
-                objSheet = (Microsoft.Office.Interop.Excel._Worksheet)objSheets.get_Item(1);
-
-                if (captions)
-                {
-                    for (int c = 0; c < myDataGridView.ColumnCount; c++)
+                    //write header rows to csv
+                    for (int i = 0; i <= myDataGridView.Columns.Count - 1; i++)
                     {
-                        range = objSheet.get_Range(columns[c] + "1", Missing.Value);
-                        range.set_Value(Missing.Value, headers[c]);
+                        if (i > 0)
+                        {
+                            swOut.Write(",");
+                        }
+                        swOut.Write(myDataGridView.Columns[i].HeaderText);
                     }
-                }
 
-                for (int i = 0; i < myDataGridView.RowCount - 1; i++)
-                {
-                    for (int j = 0; j < myDataGridView.ColumnCount; j++)
+                    swOut.WriteLine();
+
+                    //write DataGridView rows to csv
+                    for (int j = 0; j <= myDataGridView.Rows.Count - 1; j++)
                     {
-                        range = objSheet.get_Range(columns[j] + Convert.ToString(i + 2),
-                            Missing.Value);
-                        range.set_Value(Missing.Value,
-                            myDataGridView.Rows[i].Cells[j].Value.ToString());
+                        if (j > 0)
+                        {
+                            swOut.WriteLine();
+                        }
 
+                        dr = myDataGridView.Rows[j];
+
+                        for (int i = 0; i <= myDataGridView.Columns.Count - 1; i++)
+                        {
+                            if (dr.Cells[i].Value == null)
+                                continue;
+
+                            if (i > 0)
+                            {
+                                swOut.Write(",");
+                            }
+
+                            value = dr.Cells[i].Value.ToString();
+                            //replace comma's with spaces
+                            value = value.Replace(',', ' ');
+                            //replace embedded newlines with spaces
+                            value = value.Replace(Environment.NewLine, " ");
+
+                            swOut.Write(value);
+                        }
                     }
+
+                    swOut.Close();
                 }
-                objApp.Visible = false;
-                objApp.UserControl = false;
-                objApp.DisplayAlerts = false;
-
-                objBook.SaveAs(System.Environment.CurrentDirectory + "\\" + testEnv.fileName + ".xls",
-                    Microsoft.Office.Interop.Excel.XlFileFormat.xlWorkbookNormal,
-                    missingType, missingType, missingType, missingType,
-                    Microsoft.Office.Interop.Excel.XlSaveAsAccessMode.xlNoChange,
-                    missingType, missingType, missingType, missingType, missingType);
-
-                objBook.Close(false, missingType, missingType);
-                Cursor.Current = Cursors.Default;
-
-                // Clean up
-                ReleaseExcelObject(range);
-                ReleaseExcelObject(objSheet);
-                ReleaseExcelObject(objSheets);
-                ReleaseExcelObject(objBook);
-                ReleaseExcelObject(objBooks);
-                ReleaseExcelObject(objApp);
-            }
-            catch (Exception theException)
-            {
-                String errorMessage;
-                errorMessage = "Error: ";
-                errorMessage = String.Concat(errorMessage, theException.Message);
-                errorMessage = String.Concat(errorMessage, " Line: ");
-                errorMessage = String.Concat(errorMessage, theException.Source);
-                ModalessMsgBox(errorMessage);
+                catch(Exception ex)
+                {
+                    ModalessMsgBox(ex.Message);
+                }
             }
         }
+
         private static void ReleaseExcelObject(object obj)
         {
             try
@@ -694,32 +680,30 @@ namespace SerialProgram
                 testEnv.connected = false;
                 AdjustBtnText();
 
-                preSaveRow[0] = DateTime.Now.ToString(dateTimeEnd.CustomFormat);
-
                 SetDataToUI(preSaveRow);
-                SaveTofile(true, dataGridView1);
+                SaveTofile(dataGridView1);
             }
 
             handShakeTimer.Stop();
         }
         void OnTimer(object sender, EventArgs e)
         {
-#if DEBUG
-
-#else
-            if (!serialPort1.IsOpen)
+            if (TesterEnviorment.DEBUG_MODE != 1)
             {
-                testEnv.connected = false;
-                serialPort1.Close();
-                return;
+                if (!serialPort1.IsOpen)
+                {
+                    testEnv.connected = false;
+                    serialPort1.Close();
+                    return;
+                }
             }
-#endif
+
             if (sendCnt != recvCnt)
             {
                 preSaveRow[0] = DateTime.Now.ToString(dateTimeEnd.CustomFormat);
 
                 SetDataToUI(preSaveRow);
-                SaveTofile(true, dataGridView1);
+                SaveTofile(dataGridView1);
 
                 return;
             }
@@ -735,14 +719,15 @@ namespace SerialProgram
 
             handShakeTimer.Start();
 
-#if DEBUG
-            //recvCnt++;
-            string[] row = { DateTime.Now.ToString(dateTimeEnd.CustomFormat), "1", "2.000"
+            if (TesterEnviorment.DEBUG_MODE == 1)
+            {
+                //recvCnt++;
+                string[] row = { DateTime.Now.ToString(dateTimeEnd.CustomFormat), "1", "2.000"
                                , "NNNN", "NNNN", "2.000", "2.000" };
-            SetDataToUI(row);
+                SetDataToUI(row);
 
-            SaveTofile(true, dataGridView1);
-#endif
+                SaveTofile(dataGridView1);
+            }
 
             // 시리얼데이터 버퍼 STX 1 / LocalID 2 / ETX 1
             byte[] buffer = new byte[4];
@@ -754,10 +739,11 @@ namespace SerialProgram
             // End Byte
             buffer[3] = Rs232Utils.ETX;
 
-#if DEBUG
-#else
-            serialPort1.Write(buffer, 0, buffer.Length);
-#endif
+            if (TesterEnviorment.DEBUG_MODE != 1)
+            {
+                serialPort1.Write(buffer, 0, buffer.Length);
+            }
+
             DisplayStatusbarMessage(string.Format("{0}, {1}byte를 보냈읍니다 SendCnt: {2}, RecvCnt: {3}"
                 , buffer.ToString(), buffer.Length, sendCnt, recvCnt));
 
@@ -766,36 +752,45 @@ namespace SerialProgram
 
         public void LoadFromFile()
         {
+            FileStream inStream = new FileStream(testEnv.fileName + ".csv", FileMode.OpenOrCreate);
+            StreamReader sr = new StreamReader(inStream, Encoding.UTF8);
+
             try
             {
-                // OLEDB를 이용한 엑셀 연결
-                string szConn = @"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + testEnv.fileName + ".xls" + ";Extended Properties='Excel 8.0;HDR=YES'";
-                OleDbConnection conn = new OleDbConnection(szConn);
-                conn.Open();
-
-                // 엑셀로부터 데이타 읽기
-                OleDbCommand cmd = new OleDbCommand("SELECT * FROM [Sheet1$]", conn);
-                OleDbDataAdapter adpt = new OleDbDataAdapter(cmd);
-                DataSet ds = new DataSet();
-                adpt.Fill(ds);
-
-                foreach (DataRow dr in ds.Tables[0].Rows)
+                int i = 0;
+                while (!sr.EndOfStream)
                 {
+                    string s = sr.ReadLine();
+                    if (i == 0)
+                    {
+                        i++;
+                        continue;
+                    }
+
+                    string[] dr = s.Split(',');        // Split() 메서드를 이용하여 ',' 구분하여 잘라냄
+
                     string[] row = { dr[0].ToString(), dr[1].ToString()
                                         , dr[2].ToString(), dr[3].ToString()
                                         , dr[4].ToString(), dr[5].ToString()
                                         , dr[6].ToString() };
                     SetDataToUI(row);
                 }
-
-                conn.Close();
             }
-            catch(Exception e)
+            catch(Exception ex)
             {
-                ModalessMsgBox(e.Message);
+                MessageBox.Show(ex.Message);
+                inStream.Close();
+                return;
             }
+            finally
+            {
+                if (sr != null)
+                    sr.Close();
 
-            return;
+                if (inStream != null)
+                    inStream.Close();
+            }
+            
         }
 
         private void ModalessMsgBox(string msg)

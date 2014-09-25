@@ -38,6 +38,7 @@ namespace SerialProgram
         public string descPort { get; set; }
         static public int PACKET_TOKEN_COUNT = 6;
         static public string NA = "N/A";
+        static public int DEBUG_MODE = 0;
 
         public string localValue { get; set; }
         public string localId { get; set; }
@@ -112,6 +113,10 @@ namespace SerialProgram
                     {
                         appname = value;
                     }
+                    else if (token == "DEBUG_MODE")
+                    {
+                        DEBUG_MODE = Convert.ToInt32(value);
+                    }
                 }
 
                 inStream.Close();
@@ -135,6 +140,7 @@ namespace SerialProgram
                 sw.WriteLine("LOCAL_ID=" + localId.ToUpper());
                 sw.WriteLine("LOCAL_VALUE=" + localValue.ToUpper());
                 sw.WriteLine("APP_NAME=" + appname);
+                sw.WriteLine("DEBUG_MODE=" + DEBUG_MODE);
 
                 sw.Close();
             }
