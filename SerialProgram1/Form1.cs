@@ -18,9 +18,8 @@ namespace SerialProgram
 {
     public partial class Form1 : Form
     {
-
         internal enum PortStatus { None, Opened, Closed }
-        internal enum eGraphState { INVALID, TEMPERATURE, PH, SALT, OXGEN, AMP, VOLT}
+        internal enum eGraphState { INVALID, TEMPERATURE, PH, SALT, OXGEN, AMP, VOLT }
 
         private int sendCnt = 0;
         private int recvCnt = 0;
@@ -31,6 +30,30 @@ namespace SerialProgram
 
         TesterEnviorment testEnv = new SerialProgram.TesterEnviorment();
         FormViewer viewer;
+
+        [DllImport("kernel32.dll", EntryPoint = "SetThreadExecutionState", CharSet = CharSet.Auto, SetLastError = true)]
+        public static extern EXECUTION_STATE SetThreadExecutionState(EXECUTION_STATE flags);
+
+        public enum EXECUTION_STATE : uint
+        {
+            ES_SYSTEM_REQUIRED = 0x00000001,
+            ES_DISPLAY_REQUIRED = 0x00000002,
+            ES_USER_PRESENT = 0x00000004,
+            ES_CONTINUOUS = 0x80000000
+        }
+
+        // 절전/대기 모드 진입 금지
+        private void PreventMonitorPowerdown()
+        {
+            SetThreadExecutionState(EXECUTION_STATE.ES_DISPLAY_REQUIRED | EXECUTION_STATE.ES_CONTINUOUS | EXECUTION_STATE.ES_SYSTEM_REQUIRED);
+        }
+
+        // 절전/대기 모드 진입 허용
+        private void AllowMonitorPowerdown()
+        {
+            SetThreadExecutionState(~EXECUTION_STATE.ES_DISPLAY_REQUIRED & EXECUTION_STATE.ES_CONTINUOUS & ~EXECUTION_STATE.ES_SYSTEM_REQUIRED);
+        }
+
 
         public Form1()
         {
@@ -577,6 +600,10 @@ namespace SerialProgram
             }
         }
 
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            PreventMonitorPowerdown();
+        }
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (MessageBox.Show("정말 종료하시겠습니까?", "Exit",
@@ -591,6 +618,8 @@ namespace SerialProgram
                 testEnv.connected = false;
                 serialPort1.Close();
             }
+
+            AllowMonitorPowerdown();
         }
 
         private void textBoxDelay_KeyPress(object sender, KeyPressEventArgs e)
