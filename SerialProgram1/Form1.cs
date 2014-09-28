@@ -21,12 +21,12 @@ namespace SerialProgram
         internal enum PortStatus { None, Opened, Closed }
         internal enum eGraphState { INVALID, TEMPERATURE, PH, SALT, OXGEN, AMP, VOLT }
 
-        private int sendCnt = 0;
-        private int recvCnt = 0;
-        string[] preSaveRow;
+        private double sendCnt = 0;
+        private double recvCnt = 0;
+        string[] preRecvData;
 
-        System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
-        System.Windows.Forms.Timer handShakeTimer = new System.Windows.Forms.Timer();
+        System.Windows.Forms.Timer timerSendPacket = new System.Windows.Forms.Timer();
+        System.Windows.Forms.Timer timerSaveToFile = new System.Windows.Forms.Timer();
 
         TesterEnviorment testEnv = new SerialProgram.TesterEnviorment();
         FormViewer viewer;
@@ -77,10 +77,10 @@ namespace SerialProgram
             this.Text = testEnv.appname;
 
             AdjustBtnText();
-            timer.Tick += new EventHandler(OnTimer);
+            timerSendPacket.Interval = 1000;
+            timerSendPacket.Tick += new EventHandler(OnTimeSendPacket);
 
-            handShakeTimer.Interval = 1000;
-            handShakeTimer.Tick += new EventHandler(OnTimerHandShake);
+            timerSaveToFile.Tick += new EventHandler(OnTimeSaveToFile);
 
             radioButtonTemperature.Checked = true;
             serialPort1.ReceivedBytesThreshold = 1;
@@ -124,12 +124,18 @@ namespace SerialProgram
 
             return true;
         }
+        private void SetCurrentData(string[] data)
+        {
+            preRecvData = data;
+            textBoxCurrentData.Text = data[1];//.ToString();
+        }
+
         private void SetDataToUI(string[] data)
         {
             if (data == null)
                 return;
 
-            preSaveRow = data;
+            preRecvData = data;
 
             string strGridTimestamp = IsValidStr(data[0]) ? data[0] : "NA";
             string strGridTemperature = IsValidStr(data[1]) ? string.Format("{0:0.0}", Convert.ToDouble(data[1])) : "NA";
@@ -141,7 +147,7 @@ namespace SerialProgram
 
             string[] gridData = {strGridTimestamp, strGridTemperature
                 , strGridPH, strGridSalt, strGridOxgen, strGridVolt, strGridAmp};
-            dataGridView1.Rows.Add(gridData);
+            dataGridView1.Rows.Insert(0, gridData);
 
             string strTimestamp = IsValidStr(data[0]) ? data[0] : "";
             string strTemperature = IsValidStr(data[1]) ? data[1] : "";
@@ -254,7 +260,9 @@ namespace SerialProgram
                 // Local ID LSB
                 str = Convert.ToString(serialPort1.ReadByte(), 16).ToUpper();
                 // Pay Load Length MSB + LSB
-                str = Convert.ToString(serialPort1.ReadByte(), 16) + Convert.ToString(serialPort1.ReadByte(), 16);
+                str = Convert.ToString(serialPort1.ReadByte(), 16);
+                str += Convert.ToString(serialPort1.ReadByte(), 16);
+                str += Convert.ToString(serialPort1.ReadByte(), 16);
                 str = Rs232Utils.ConvertHexToString(str);
                 int payloadLength = Int32.Parse(str);
 
@@ -288,23 +296,24 @@ namespace SerialProgram
                 return;
 
             int payloadLength = recieveData.Length;
-            if (payloadLength % 4 != 0)
+            if (payloadLength % 5 != 0)
                 return;
 
             string token = "";
-            int receivedTokencount = payloadLength / 4;
+            int receivedTokencount = payloadLength / 5;
             string[] datas = new string[TesterEnviorment.PACKET_TOKEN_COUNT];
             if (receivedTokencount > TesterEnviorment.PACKET_TOKEN_COUNT)
-                return;
+                 return;
 
             for (int i = 0; i < receivedTokencount; i++)
             {
-                token += recieveData[i * 4];
-                token += recieveData[i * 4 + 1];
-                token += recieveData[i * 4 + 2];
-                token += recieveData[i * 4 + 3];
+                token += recieveData[i * 5];
+                token += recieveData[i * 5 + 1];
+                token += recieveData[i * 5 + 2];
+                token += recieveData[i * 5 + 3];
+                token += recieveData[i * 5 + 4];
 
-                if (token.Equals("NNNN"))
+                if (token.Equals("NNNNN"))
                 {
                     datas[i] = "";
                 }
@@ -319,7 +328,6 @@ namespace SerialProgram
                     {
                         datas[i] = token;
                     }
-                    
                 }
 
                 token = "";
@@ -328,9 +336,14 @@ namespace SerialProgram
             //수조온도	pH농도	염도	용존산소량	음극전위, 양극전류
             string[] row = { DateTime.Now.ToString(dateTimeEnd.CustomFormat), datas[0], datas[1]
                                , datas[2], datas[3], datas[4], datas[5] };
-            SetDataToUI(row);
+            
+            SetCurrentData(row);
 
-            SaveTofile(dataGridView1);
+            if (recvCnt == 1)
+            {
+                SetDataToUI(row);
+                SaveTofile(dataGridView1);
+            }
 
             DisplayStatusbarMessage(string.Format("SendCnt: {0}, RecvCnt: {1}", sendCnt, recvCnt));
         }
@@ -340,24 +353,31 @@ namespace SerialProgram
         {
             testEnv.working = true;
 
-            timer.Stop();
+            timerSendPacket.Stop();
+            timerSaveToFile.Stop();
 
             sendCnt = 0;
             recvCnt = 0;
 
             if (TesterEnviorment.DEBUG_MODE == 1)
             {
-                timer.Interval = 5 * 1000;
+                timerSendPacket.Interval = 1000;
             }
             else if(TesterEnviorment.DEBUG_MODE == 2)
             {
-                timer.Interval = 5 * 1000;
-                timer.Start(); 
+                timerSendPacket.Interval = 1000;
+                timerSendPacket.Start();
+
+                timerSaveToFile.Interval = 60 * 1000;
+                timerSaveToFile.Start();
             }
             else
             {
-                timer.Interval = testEnv.delay * 1000 * 60;
-                timer.Start();
+                timerSendPacket.Interval = 1000;
+                timerSendPacket.Start();
+
+                timerSaveToFile.Interval = testEnv.delay * 1000 * 60;
+                timerSaveToFile.Start();
             }
 
             textBoxTarget.Enabled = false;
@@ -373,7 +393,8 @@ namespace SerialProgram
         {
             testEnv.working = false;
 
-            timer.Stop();
+            timerSendPacket.Stop();
+            timerSaveToFile.Stop();
 
             textBoxTarget.Enabled = true;
             textBoxDelay.Enabled = true;
@@ -415,8 +436,8 @@ namespace SerialProgram
             testEnv.connected = false;
             testEnv.working = false;
 
-            timer.Stop();
-            handShakeTimer.Stop();
+            timerSendPacket.Stop();
+            timerSaveToFile.Stop();
 
             AdjustBtnText();
         }
@@ -701,7 +722,6 @@ namespace SerialProgram
                 }
             }
         }
-
         private static void ReleaseExcelObject(object obj)
         {
             try
@@ -722,23 +742,12 @@ namespace SerialProgram
                 GC.Collect();
             }
         }
-
-        
-        void OnTimerHandShake(object sender, EventArgs e)
+        void OnTimeSaveToFile(object sender, EventArgs e)
         {
-            if (sendCnt != recvCnt)
-            {
-                ModalessMsgBox("포트가 끊겼습니다.");
-                testEnv.connected = false;
-                AdjustBtnText();
-
-                SetDataToUI(preSaveRow);
-                SaveTofile(dataGridView1);
-            }
-
-            handShakeTimer.Stop();
+            SaveTofile(dataGridView1);
+            SetDataToUI(preRecvData);
         }
-        void OnTimer(object sender, EventArgs e)
+        void OnTimeSendPacket(object sender, EventArgs e)
         {
             if (TesterEnviorment.DEBUG_MODE != 1)
             {
@@ -752,35 +761,38 @@ namespace SerialProgram
 
             if (sendCnt != recvCnt)
             {
-                if (preSaveRow == null)
-                    return;
+                if (testEnv.connected == true)
+                {
+                    ModalessMsgBox("포트가 끊겼습니다.");
+                }
 
-                preSaveRow[0] = DateTime.Now.ToString(dateTimeEnd.CustomFormat);
+                testEnv.connected = false;
+                AdjustBtnText();
 
-                SetDataToUI(preSaveRow);
-                SaveTofile(dataGridView1);
+                if (preRecvData != null)
+                {
+                    preRecvData[0] = DateTime.Now.ToString(dateTimeEnd.CustomFormat);
+                    textBoxCurrentData.Text = preRecvData.ToString();
+                }
 
                 return;
             }
 
             SendPacket();
-
         }
 
         private void SendPacket()
         {
             sendCnt++;
 
-            handShakeTimer.Start();
-
             if (TesterEnviorment.DEBUG_MODE == 1)
             {
                 //recvCnt++;
                 string[] row = { DateTime.Now.ToString(dateTimeEnd.CustomFormat), "1", "2.000"
                                , "NNNN", "NNNN", "2.000", "2.000" };
-                SetDataToUI(row);
-
-                SaveTofile(dataGridView1);
+                //SetDataToUI(row);
+                //SaveTofile(dataGridView1);
+                SetCurrentData(row);
             }
 
             // 시리얼데이터 버퍼 STX 1 / LocalID 2 / ETX 1
