@@ -29,31 +29,31 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend5 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea6 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend6 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series6 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea13 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend13 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series13 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea14 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend14 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series14 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea15 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend15 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series15 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea16 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend16 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series16 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea17 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend17 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series17 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea18 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend18 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series18 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle15 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle16 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle17 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle18 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle19 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle20 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle21 = new System.Windows.Forms.DataGridViewCellStyle();
             this.label2 = new System.Windows.Forms.Label();
             this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
             this.chartAmp = new System.Windows.Forms.DataVisualization.Charting.Chart();
@@ -91,7 +91,21 @@
             this.SendTextBox = new System.Windows.Forms.TextBox();
             this.lblMsg = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.textBoxCurrentData = new System.Windows.Forms.TextBox();
+            this.textBoxData_Time = new System.Windows.Forms.TextBox();
+            this.textBoxData_Temperature = new System.Windows.Forms.TextBox();
+            this.textBoxData_pH = new System.Windows.Forms.TextBox();
+            this.textBoxData_Salt = new System.Windows.Forms.TextBox();
+            this.textBoxData_Oxygen = new System.Windows.Forms.TextBox();
+            this.textBoxData_Volt = new System.Windows.Forms.TextBox();
+            this.textBoxData_Amp = new System.Windows.Forms.TextBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.chartAmp)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chartVolt)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chartOxgen)).BeginInit();
@@ -102,6 +116,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.panel1.SuspendLayout();
             this.lblMsg.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // label2
@@ -123,22 +138,22 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.chartAmp.BorderSkin.PageColor = System.Drawing.Color.Gray;
-            chartArea1.AxisX.LineColor = System.Drawing.Color.DarkGray;
-            chartArea1.AxisY.LineColor = System.Drawing.Color.DarkGray;
-            chartArea1.Name = "ChartArea1";
-            this.chartAmp.ChartAreas.Add(chartArea1);
-            legend1.Name = "Legend1";
-            this.chartAmp.Legends.Add(legend1);
+            chartArea13.AxisX.LineColor = System.Drawing.Color.DarkGray;
+            chartArea13.AxisY.LineColor = System.Drawing.Color.DarkGray;
+            chartArea13.Name = "ChartArea1";
+            this.chartAmp.ChartAreas.Add(chartArea13);
+            legend13.Name = "Legend1";
+            this.chartAmp.Legends.Add(legend13);
             this.chartAmp.Location = new System.Drawing.Point(775, 12);
             this.chartAmp.Name = "chartAmp";
-            series1.BorderWidth = 3;
-            series1.ChartArea = "ChartArea1";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series1.Color = System.Drawing.Color.Blue;
-            series1.EmptyPointStyle.BorderWidth = 3;
-            series1.Legend = "Legend1";
-            series1.Name = "양극전류";
-            this.chartAmp.Series.Add(series1);
+            series13.BorderWidth = 3;
+            series13.ChartArea = "ChartArea1";
+            series13.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series13.Color = System.Drawing.Color.Blue;
+            series13.EmptyPointStyle.BorderWidth = 3;
+            series13.Legend = "Legend1";
+            series13.Name = "양극전류";
+            this.chartAmp.Series.Add(series13);
             this.chartAmp.Size = new System.Drawing.Size(628, 498);
             this.chartAmp.TabIndex = 24;
             this.chartAmp.Text = "양극전류";
@@ -148,19 +163,19 @@
             this.chartVolt.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            chartArea2.Name = "ChartArea1";
-            this.chartVolt.ChartAreas.Add(chartArea2);
-            legend2.Name = "Legend1";
-            this.chartVolt.Legends.Add(legend2);
+            chartArea14.Name = "ChartArea1";
+            this.chartVolt.ChartAreas.Add(chartArea14);
+            legend14.Name = "Legend1";
+            this.chartVolt.Legends.Add(legend14);
             this.chartVolt.Location = new System.Drawing.Point(775, 12);
             this.chartVolt.Name = "chartVolt";
-            series2.BorderWidth = 3;
-            series2.ChartArea = "ChartArea1";
-            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series2.Color = System.Drawing.Color.Blue;
-            series2.Legend = "Legend1";
-            series2.Name = "음극전위";
-            this.chartVolt.Series.Add(series2);
+            series14.BorderWidth = 3;
+            series14.ChartArea = "ChartArea1";
+            series14.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series14.Color = System.Drawing.Color.Blue;
+            series14.Legend = "Legend1";
+            series14.Name = "음극전위";
+            this.chartVolt.Series.Add(series14);
             this.chartVolt.Size = new System.Drawing.Size(628, 498);
             this.chartVolt.TabIndex = 23;
             this.chartVolt.Text = "음극전위";
@@ -170,19 +185,19 @@
             this.chartOxgen.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            chartArea3.Name = "ChartArea1";
-            this.chartOxgen.ChartAreas.Add(chartArea3);
-            legend3.Name = "Legend1";
-            this.chartOxgen.Legends.Add(legend3);
+            chartArea15.Name = "ChartArea1";
+            this.chartOxgen.ChartAreas.Add(chartArea15);
+            legend15.Name = "Legend1";
+            this.chartOxgen.Legends.Add(legend15);
             this.chartOxgen.Location = new System.Drawing.Point(775, 12);
             this.chartOxgen.Name = "chartOxgen";
-            series3.BorderWidth = 3;
-            series3.ChartArea = "ChartArea1";
-            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series3.Color = System.Drawing.Color.Blue;
-            series3.Legend = "Legend1";
-            series3.Name = "용존산소량";
-            this.chartOxgen.Series.Add(series3);
+            series15.BorderWidth = 3;
+            series15.ChartArea = "ChartArea1";
+            series15.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series15.Color = System.Drawing.Color.Blue;
+            series15.Legend = "Legend1";
+            series15.Name = "용존산소량";
+            this.chartOxgen.Series.Add(series15);
             this.chartOxgen.Size = new System.Drawing.Size(628, 498);
             this.chartOxgen.TabIndex = 22;
             this.chartOxgen.Text = "염도";
@@ -192,19 +207,19 @@
             this.chartSalt.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            chartArea4.Name = "ChartArea1";
-            this.chartSalt.ChartAreas.Add(chartArea4);
-            legend4.Name = "Legend1";
-            this.chartSalt.Legends.Add(legend4);
+            chartArea16.Name = "ChartArea1";
+            this.chartSalt.ChartAreas.Add(chartArea16);
+            legend16.Name = "Legend1";
+            this.chartSalt.Legends.Add(legend16);
             this.chartSalt.Location = new System.Drawing.Point(775, 12);
             this.chartSalt.Name = "chartSalt";
-            series4.BorderWidth = 3;
-            series4.ChartArea = "ChartArea1";
-            series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series4.Color = System.Drawing.Color.Blue;
-            series4.Legend = "Legend1";
-            series4.Name = "염도";
-            this.chartSalt.Series.Add(series4);
+            series16.BorderWidth = 3;
+            series16.ChartArea = "ChartArea1";
+            series16.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series16.Color = System.Drawing.Color.Blue;
+            series16.Legend = "Legend1";
+            series16.Name = "염도";
+            this.chartSalt.Series.Add(series16);
             this.chartSalt.Size = new System.Drawing.Size(628, 498);
             this.chartSalt.TabIndex = 21;
             this.chartSalt.Text = "염도";
@@ -214,19 +229,19 @@
             this.chartPH.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            chartArea5.Name = "ChartArea1";
-            this.chartPH.ChartAreas.Add(chartArea5);
-            legend5.Name = "Legend1";
-            this.chartPH.Legends.Add(legend5);
+            chartArea17.Name = "ChartArea1";
+            this.chartPH.ChartAreas.Add(chartArea17);
+            legend17.Name = "Legend1";
+            this.chartPH.Legends.Add(legend17);
             this.chartPH.Location = new System.Drawing.Point(775, 12);
             this.chartPH.Name = "chartPH";
-            series5.BorderWidth = 3;
-            series5.ChartArea = "ChartArea1";
-            series5.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series5.Color = System.Drawing.Color.Blue;
-            series5.Legend = "Legend1";
-            series5.Name = "PH";
-            this.chartPH.Series.Add(series5);
+            series17.BorderWidth = 3;
+            series17.ChartArea = "ChartArea1";
+            series17.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series17.Color = System.Drawing.Color.Blue;
+            series17.Legend = "Legend1";
+            series17.Name = "PH";
+            this.chartPH.Series.Add(series17);
             this.chartPH.Size = new System.Drawing.Size(628, 498);
             this.chartPH.TabIndex = 20;
             this.chartPH.Text = "PH";
@@ -236,19 +251,19 @@
             this.chartTemperature.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            chartArea6.Name = "ChartArea1";
-            this.chartTemperature.ChartAreas.Add(chartArea6);
-            legend6.Name = "Legend1";
-            this.chartTemperature.Legends.Add(legend6);
+            chartArea18.Name = "ChartArea1";
+            this.chartTemperature.ChartAreas.Add(chartArea18);
+            legend18.Name = "Legend1";
+            this.chartTemperature.Legends.Add(legend18);
             this.chartTemperature.Location = new System.Drawing.Point(775, 12);
             this.chartTemperature.Name = "chartTemperature";
-            series6.BorderWidth = 3;
-            series6.ChartArea = "ChartArea1";
-            series6.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series6.Color = System.Drawing.Color.Blue;
-            series6.Legend = "Legend1";
-            series6.Name = "온도";
-            this.chartTemperature.Series.Add(series6);
+            series18.BorderWidth = 3;
+            series18.ChartArea = "ChartArea1";
+            series18.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series18.Color = System.Drawing.Color.Blue;
+            series18.Legend = "Legend1";
+            series18.Name = "온도";
+            this.chartTemperature.Series.Add(series18);
             this.chartTemperature.Size = new System.Drawing.Size(628, 498);
             this.chartTemperature.TabIndex = 19;
             this.chartTemperature.Text = "온도";
@@ -359,18 +374,18 @@
             this.Column3,
             this.Column6,
             this.Column7});
-            this.dataGridView1.Location = new System.Drawing.Point(2, 154);
+            this.dataGridView1.Location = new System.Drawing.Point(2, 194);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
             this.dataGridView1.RowTemplate.Height = 23;
-            this.dataGridView1.Size = new System.Drawing.Size(743, 428);
+            this.dataGridView1.Size = new System.Drawing.Size(743, 388);
             this.dataGridView1.TabIndex = 16;
             this.dataGridView1.TabStop = false;
             // 
             // Column1
             // 
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            this.Column1.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle15.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.Column1.DefaultCellStyle = dataGridViewCellStyle15;
             this.Column1.HeaderText = "     기록시간";
             this.Column1.Name = "Column1";
             this.Column1.ReadOnly = true;
@@ -378,8 +393,8 @@
             // 
             // Column4
             // 
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            this.Column4.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle16.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.Column4.DefaultCellStyle = dataGridViewCellStyle16;
             this.Column4.HeaderText = "       온도";
             this.Column4.Name = "Column4";
             this.Column4.ReadOnly = true;
@@ -387,8 +402,8 @@
             // 
             // Column5
             // 
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            this.Column5.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle17.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.Column5.DefaultCellStyle = dataGridViewCellStyle17;
             this.Column5.HeaderText = "     pH농도";
             this.Column5.Name = "Column5";
             this.Column5.ReadOnly = true;
@@ -396,8 +411,8 @@
             // 
             // Column2
             // 
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            this.Column2.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle18.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.Column2.DefaultCellStyle = dataGridViewCellStyle18;
             this.Column2.HeaderText = "       염도";
             this.Column2.Name = "Column2";
             this.Column2.ReadOnly = true;
@@ -405,8 +420,8 @@
             // 
             // Column3
             // 
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            this.Column3.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle19.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.Column3.DefaultCellStyle = dataGridViewCellStyle19;
             this.Column3.HeaderText = "  용존 산소량";
             this.Column3.Name = "Column3";
             this.Column3.ReadOnly = true;
@@ -414,8 +429,8 @@
             // 
             // Column6
             // 
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            this.Column6.DefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle20.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.Column6.DefaultCellStyle = dataGridViewCellStyle20;
             this.Column6.HeaderText = "    음극전위";
             this.Column6.Name = "Column6";
             this.Column6.ReadOnly = true;
@@ -423,8 +438,8 @@
             // 
             // Column7
             // 
-            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            this.Column7.DefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle21.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.Column7.DefaultCellStyle = dataGridViewCellStyle21;
             this.Column7.HeaderText = "    양극전류";
             this.Column7.Name = "Column7";
             this.Column7.ReadOnly = true;
@@ -562,14 +577,147 @@
             this.toolStripStatusLabel1.Size = new System.Drawing.Size(121, 17);
             this.toolStripStatusLabel1.Text = "toolStripStatusLabel1";
             // 
-            // textBoxCurrentData
+            // textBoxData_Time
             // 
-            this.textBoxCurrentData.Enabled = false;
-            this.textBoxCurrentData.Location = new System.Drawing.Point(76, 127);
-            this.textBoxCurrentData.MaxLength = 255;
-            this.textBoxCurrentData.Name = "textBoxCurrentData";
-            this.textBoxCurrentData.Size = new System.Drawing.Size(664, 21);
-            this.textBoxCurrentData.TabIndex = 23;
+            this.textBoxData_Time.Enabled = false;
+            this.textBoxData_Time.Location = new System.Drawing.Point(49, 149);
+            this.textBoxData_Time.MaxLength = 255;
+            this.textBoxData_Time.Name = "textBoxData_Time";
+            this.textBoxData_Time.Size = new System.Drawing.Size(90, 21);
+            this.textBoxData_Time.TabIndex = 23;
+            // 
+            // textBoxData_Temperature
+            // 
+            this.textBoxData_Temperature.Enabled = false;
+            this.textBoxData_Temperature.Location = new System.Drawing.Point(147, 149);
+            this.textBoxData_Temperature.MaxLength = 255;
+            this.textBoxData_Temperature.Name = "textBoxData_Temperature";
+            this.textBoxData_Temperature.Size = new System.Drawing.Size(90, 21);
+            this.textBoxData_Temperature.TabIndex = 26;
+            // 
+            // textBoxData_pH
+            // 
+            this.textBoxData_pH.Enabled = false;
+            this.textBoxData_pH.Location = new System.Drawing.Point(246, 149);
+            this.textBoxData_pH.MaxLength = 255;
+            this.textBoxData_pH.Name = "textBoxData_pH";
+            this.textBoxData_pH.Size = new System.Drawing.Size(90, 21);
+            this.textBoxData_pH.TabIndex = 27;
+            // 
+            // textBoxData_Salt
+            // 
+            this.textBoxData_Salt.Enabled = false;
+            this.textBoxData_Salt.Location = new System.Drawing.Point(346, 149);
+            this.textBoxData_Salt.MaxLength = 255;
+            this.textBoxData_Salt.Name = "textBoxData_Salt";
+            this.textBoxData_Salt.Size = new System.Drawing.Size(90, 21);
+            this.textBoxData_Salt.TabIndex = 28;
+            // 
+            // textBoxData_Oxygen
+            // 
+            this.textBoxData_Oxygen.Enabled = false;
+            this.textBoxData_Oxygen.Location = new System.Drawing.Point(444, 149);
+            this.textBoxData_Oxygen.MaxLength = 255;
+            this.textBoxData_Oxygen.Name = "textBoxData_Oxygen";
+            this.textBoxData_Oxygen.Size = new System.Drawing.Size(90, 21);
+            this.textBoxData_Oxygen.TabIndex = 29;
+            // 
+            // textBoxData_Volt
+            // 
+            this.textBoxData_Volt.Enabled = false;
+            this.textBoxData_Volt.Location = new System.Drawing.Point(546, 149);
+            this.textBoxData_Volt.MaxLength = 255;
+            this.textBoxData_Volt.Name = "textBoxData_Volt";
+            this.textBoxData_Volt.Size = new System.Drawing.Size(90, 21);
+            this.textBoxData_Volt.TabIndex = 30;
+            // 
+            // textBoxData_Amp
+            // 
+            this.textBoxData_Amp.Enabled = false;
+            this.textBoxData_Amp.Location = new System.Drawing.Point(647, 149);
+            this.textBoxData_Amp.MaxLength = 255;
+            this.textBoxData_Amp.Name = "textBoxData_Amp";
+            this.textBoxData_Amp.Size = new System.Drawing.Size(90, 21);
+            this.textBoxData_Amp.TabIndex = 31;
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.label11);
+            this.groupBox2.Controls.Add(this.label10);
+            this.groupBox2.Controls.Add(this.label9);
+            this.groupBox2.Controls.Add(this.label8);
+            this.groupBox2.Controls.Add(this.label7);
+            this.groupBox2.Controls.Add(this.label4);
+            this.groupBox2.Controls.Add(this.label1);
+            this.groupBox2.Location = new System.Drawing.Point(21, 116);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(724, 63);
+            this.groupBox2.TabIndex = 32;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "현재 데이터";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(58, 17);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(29, 12);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "시간";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(354, 17);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(29, 12);
+            this.label4.TabIndex = 1;
+            this.label4.Text = "염도";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(539, 17);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(57, 12);
+            this.label7.TabIndex = 2;
+            this.label7.Text = "음극 전위";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(431, 17);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(69, 12);
+            this.label8.TabIndex = 3;
+            this.label8.Text = "용존 산소량";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(645, 18);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(53, 12);
+            this.label9.TabIndex = 4;
+            this.label9.Text = "양극전류";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(250, 17);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(44, 12);
+            this.label10.TabIndex = 5;
+            this.label10.Text = "pH농도";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(155, 17);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(29, 12);
+            this.label11.TabIndex = 6;
+            this.label11.Text = "온도";
             // 
             // Form1
             // 
@@ -577,7 +725,13 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.ClientSize = new System.Drawing.Size(1417, 607);
-            this.Controls.Add(this.textBoxCurrentData);
+            this.Controls.Add(this.textBoxData_Amp);
+            this.Controls.Add(this.textBoxData_Volt);
+            this.Controls.Add(this.textBoxData_Oxygen);
+            this.Controls.Add(this.textBoxData_Salt);
+            this.Controls.Add(this.textBoxData_pH);
+            this.Controls.Add(this.textBoxData_Temperature);
+            this.Controls.Add(this.textBoxData_Time);
             this.Controls.Add(this.lblMsg);
             this.Controls.Add(this.chartAmp);
             this.Controls.Add(this.chartVolt);
@@ -590,6 +744,7 @@
             this.Controls.Add(this.RecvTextBox);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.SendTextBox);
+            this.Controls.Add(this.groupBox2);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "0";
@@ -608,6 +763,8 @@
             this.panel1.PerformLayout();
             this.lblMsg.ResumeLayout(false);
             this.lblMsg.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -652,7 +809,21 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.DateTimePicker dateTimeEnd;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.TextBox textBoxCurrentData;
+        private System.Windows.Forms.TextBox textBoxData_Time;
+        private System.Windows.Forms.TextBox textBoxData_Temperature;
+        private System.Windows.Forms.TextBox textBoxData_pH;
+        private System.Windows.Forms.TextBox textBoxData_Salt;
+        private System.Windows.Forms.TextBox textBoxData_Oxygen;
+        private System.Windows.Forms.TextBox textBoxData_Volt;
+        private System.Windows.Forms.TextBox textBoxData_Amp;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label1;
     }
 }
 

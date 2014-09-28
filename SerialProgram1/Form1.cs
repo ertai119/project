@@ -22,7 +22,6 @@ namespace SerialProgram
         internal enum eGraphState { INVALID, TEMPERATURE, PH, SALT, OXGEN, AMP, VOLT }
 
         private double sendCnt = 0;
-        private double recvCnt = 0;
         string[] preRecvData;
 
         System.Windows.Forms.Timer timerSendPacket = new System.Windows.Forms.Timer();
@@ -127,10 +126,16 @@ namespace SerialProgram
         private void SetCurrentData(string[] data)
         {
             preRecvData = data;
-            textBoxCurrentData.Text = data[1];//.ToString();
+            textBoxData_Time.Text = data[0];//.ToString();
+            textBoxData_Temperature.Text = data[1];//.ToString();
+            textBoxData_pH.Text = data[2];//.ToString();
+            textBoxData_Salt.Text = data[3];//.ToString();
+            textBoxData_Oxygen.Text = data[4];//.ToString();
+            textBoxData_Volt.Text = data[5];//.ToString();
+            textBoxData_Amp.Text = data[6];//.ToString();
         }
 
-        private void SetDataToUI(string[] data)
+        private void SetDataToUI(string[] data, bool inverse)
         {
             if (data == null)
                 return;
@@ -147,7 +152,15 @@ namespace SerialProgram
 
             string[] gridData = {strGridTimestamp, strGridTemperature
                 , strGridPH, strGridSalt, strGridOxgen, strGridVolt, strGridAmp};
-            dataGridView1.Rows.Insert(0, gridData);
+
+            if (inverse == true)
+            {
+                dataGridView1.Rows.Insert(0, gridData);
+            }
+            else
+            {
+                dataGridView1.Rows.Add(gridData);
+            }
 
             string strTimestamp = IsValidStr(data[0]) ? data[0] : "";
             string strTemperature = IsValidStr(data[1]) ? data[1] : "";
@@ -290,7 +303,7 @@ namespace SerialProgram
 
             // 누적 데이터를 없애고
             recieveSB = "";
-            recvCnt++;
+            sendCnt--;
 
             if (recieveData.Length <= 0)
                 return;
@@ -339,16 +352,15 @@ namespace SerialProgram
             
             SetCurrentData(row);
 
-            if (recvCnt == 1)
+            if (sendCnt == 1)
             {
-                SetDataToUI(row);
+                SetDataToUI(row, true);
                 SaveTofile(dataGridView1);
             }
 
-            DisplayStatusbarMessage(string.Format("SendCnt: {0}, RecvCnt: {1}", sendCnt, recvCnt));
+            DisplayStatusbarMessage(string.Format("Serial Status: {0}", sendCnt));
         }
 
-        
         private void SetStateStartTest()
         {
             testEnv.working = true;
@@ -357,7 +369,6 @@ namespace SerialProgram
             timerSaveToFile.Stop();
 
             sendCnt = 0;
-            recvCnt = 0;
 
             if (TesterEnviorment.DEBUG_MODE == 1)
             {
@@ -469,7 +480,6 @@ namespace SerialProgram
 
                         testEnv.connected = true;
                         sendCnt = 0;
-                        recvCnt = 0;
 
                         AdjustBtnText();
                     }
@@ -744,11 +754,20 @@ namespace SerialProgram
         }
         void OnTimeSaveToFile(object sender, EventArgs e)
         {
+            SetDataToUI(preRecvData, true);
             SaveTofile(dataGridView1);
-            SetDataToUI(preRecvData);
         }
         void OnTimeSendPacket(object sender, EventArgs e)
         {
+            if (DateTime.Now > testEnv.endTime)
+            {
+                ModalessMsgBox("시험이 완료되었습니다.");
+
+                SetStateStopTest();
+
+                return;
+            }
+
             if (TesterEnviorment.DEBUG_MODE != 1)
             {
                 if (!serialPort1.IsOpen)
@@ -759,7 +778,7 @@ namespace SerialProgram
                 }
             }
 
-            if (sendCnt != recvCnt)
+            if (sendCnt != 0)
             {
                 if (testEnv.connected == true)
                 {
@@ -772,7 +791,7 @@ namespace SerialProgram
                 if (preRecvData != null)
                 {
                     preRecvData[0] = DateTime.Now.ToString(dateTimeEnd.CustomFormat);
-                    textBoxCurrentData.Text = preRecvData.ToString();
+                    textBoxData_Time.Text = preRecvData.ToString();
                 }
 
                 return;
@@ -810,7 +829,7 @@ namespace SerialProgram
                 serialPort1.Write(buffer, 0, buffer.Length);
             }
 
-            DisplayStatusbarMessage(string.Format("SendCnt: {0}, RecvCnt: {1}", sendCnt, recvCnt));
+            DisplayStatusbarMessage(string.Format("Serial Status: {0}", sendCnt));
 
             SendTextBox.Text += Rs232Utils.ByteArrayToHexString(buffer) + "\r\n";
         }
@@ -838,7 +857,7 @@ namespace SerialProgram
                                         , dr[2].ToString(), dr[3].ToString()
                                         , dr[4].ToString(), dr[5].ToString()
                                         , dr[6].ToString() };
-                    SetDataToUI(row);
+                    SetDataToUI(row, false);
                 }
             }
             catch(Exception ex)
@@ -855,7 +874,6 @@ namespace SerialProgram
                 if (inStream != null)
                     inStream.Close();
             }
-            
         }
 
         private void ModalessMsgBox(string msg)
@@ -909,7 +927,6 @@ namespace SerialProgram
             viewer.Owner = this;
             viewer.Show();
         }
-
     }
 }
 
