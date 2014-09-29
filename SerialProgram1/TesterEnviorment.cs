@@ -7,16 +7,6 @@ using System.Windows.Forms;
 
 namespace SerialProgram
 {
-    struct CellData
-    {
-        public DateTime timeStamp { get; set; }
-        public float solt { get; set; }
-        public float oxgen { get; set; }
-        public float temperature { get; set; }
-        public float pH { get; set; }
-        public float amp { get; set; }
-    }
-
     class TesterEnviorment
     {
 
@@ -26,11 +16,12 @@ namespace SerialProgram
         {
             get
             {
-                return target + "_" + endTime.ToString("yyyy.MM.dd.HH.mm");
+                return target + "_" + startTime.ToString("yyyy.MM.dd.HH.mm") + "_to_" + endTime.ToString("yyyy.MM.dd.HH.mm");
             }
         }
 
         public DateTime endTime { get; set; }
+        public DateTime startTime { get; set; }
         public int delay { get; set; }
         public bool connected { get; set; }
         public bool working { get; set; }
@@ -97,6 +88,10 @@ namespace SerialProgram
                     {
                         endTime = Convert.ToDateTime(value);
                     }
+                    else if (token == "STARTTIME")
+                    {
+                        startTime = Convert.ToDateTime(value);
+                    }
                     else if (token == "FILENAME")
                     {
                         target = value;
@@ -136,6 +131,7 @@ namespace SerialProgram
 
                 sw.WriteLine("DELAY=" + delay.ToString());
                 sw.WriteLine("ENDTIME=" + endTime.ToString());
+                sw.WriteLine("STARTTIME=" + startTime.ToString());
                 sw.WriteLine("FILENAME=" + target);
                 sw.WriteLine("LOCAL_ID=" + localId.ToUpper());
                 sw.WriteLine("LOCAL_VALUE=" + localValue.ToUpper());
@@ -148,6 +144,12 @@ namespace SerialProgram
             {
                 MessageBox.Show(e.Message);
             }
+        }
+
+        static public void ConvertData(string[] data, DateTime startTime)
+        {
+            TimeSpan elpasedTime = DateTime.Now.AddDays(1) - startTime;
+            data[0] = elpasedTime.Days + "일 " + elpasedTime.Hours + "시간 " + elpasedTime.Minutes + "분";
         }
     }
 }

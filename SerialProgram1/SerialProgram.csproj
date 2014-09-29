@@ -64,7 +64,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Cell.cs" />
+    <Compile Include="TesterEnviorment.cs" />
     <Compile Include="TesterSettingDialog.cs">
       <SubType>Form</SubType>
     </Compile>

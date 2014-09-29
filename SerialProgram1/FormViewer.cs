@@ -83,7 +83,7 @@ namespace SerialProgram
                                                 , dr[2].ToString(), dr[3].ToString()
                                                 , dr[4].ToString(), dr[5].ToString()
                                                 , dr[6].ToString() };
-                            SetDataToUI(row);
+                            SetDataFromFile(row);
 
                         }
                     }
@@ -119,8 +119,11 @@ namespace SerialProgram
             return true;
         }
 
-        private void SetDataToUI(string[] data)
+        private void SetDataFromFile(string[] data)
         {
+            if (data == null)
+                return;
+
             string strGridTimestamp = IsValidStr(data[0]) ? data[0] : "NA";
             string strGridTemperature = IsValidStr(data[1]) ? string.Format("{0:0.0}", Convert.ToDouble(data[1])) : "NA";
             string strGridPH = IsValidStr(data[2]) ? string.Format("{0:0.0}", Convert.ToDouble(data[2])) : "NA";
@@ -131,6 +134,7 @@ namespace SerialProgram
 
             string[] gridData = {strGridTimestamp, strGridTemperature
                 , strGridPH, strGridSalt, strGridOxgen, strGridVolt, strGridAmp};
+
             dataGridView1.Rows.Add(gridData);
 
             string strTimestamp = IsValidStr(data[0]) ? data[0] : "";
