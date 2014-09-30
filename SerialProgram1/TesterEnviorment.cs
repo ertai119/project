@@ -16,7 +16,14 @@ namespace SerialProgram
         {
             get
             {
-                return target + "_" + startTime.ToString("yyyy.MM.dd.HH.mm") + "_to_" + endTime.ToString("yyyy.MM.dd.HH.mm");
+                return target + "_" + startTime.ToString(DATETIME_FORMAT) + "_to_" + endTime.ToString(DATETIME_FORMAT) + ".csv";
+            }
+        }
+        public string completedFilePath
+        {
+            get
+            {
+                return System.Environment.CurrentDirectory + "\\Completed\\" + target + "_" + startTime.ToString(DATETIME_FORMAT) + "_to_" + endTime.ToString(DATETIME_FORMAT) + ".csv";
             }
         }
 
@@ -28,12 +35,14 @@ namespace SerialProgram
         public string appname { get; set; }
         public string descPort { get; set; }
         static public int PACKET_TOKEN_COUNT = 6;
-        static public string NA = "N/A";
+        static public string STR_NA = "N/A";
+        static public string STR_NNNNN = "NNNNN";
+        static public string STR_EMPTY = "";
         static public int DEBUG_MODE = 0;
-
+        static public string PATH_COMPLETE = "Completed";
+        static public string DATETIME_FORMAT = "yyyy년_MM월_dd일_HH시mm분";
         public string localValue { get; set; }
         public string localId { get; set; }
-
         public bool EnableRunTest()
         {
             if (DateTime.Now >= endTime)
@@ -59,7 +68,6 @@ namespace SerialProgram
 
             return true;
         }
-
         public void InitFromFile()
         {
             string path = System.Environment.CurrentDirectory +"\\" + "config.txt";
@@ -121,7 +129,6 @@ namespace SerialProgram
                 MessageBox.Show(e.Message);
             }
         }
-
         public void SaveConfig()
         {
             string path = System.Environment.CurrentDirectory + "\\" + "config.txt";
@@ -145,11 +152,39 @@ namespace SerialProgram
                 MessageBox.Show(e.Message);
             }
         }
-
-        static public void ConvertData(string[] data, DateTime startTime)
+        static public void ConvertDateTime(string[] data, DateTime startTime)
         {
-            TimeSpan elpasedTime = DateTime.Now.AddDays(1) - startTime;
-            data[0] = elpasedTime.Days + "일 " + elpasedTime.Hours + "시간 " + elpasedTime.Minutes + "분";
+            string temp = startTime.ToString("yyyy-MM-dd-HH:mm");
+            string nowTemp = DateTime.Now.ToString("yyyy-MM-dd-HH:mm");
+
+            DateTime tempDate = Convert.ToDateTime(temp);
+            DateTime nowTempDate = Convert.ToDateTime(nowTemp);
+
+            TimeSpan elpasedTime = nowTempDate - tempDate;
+            data[0] = elpasedTime.Days + "일차 " + elpasedTime.Hours + "시간 " + elpasedTime.Minutes + "분";
+        }
+        static public bool IsValidStr(string str)
+        {
+            if (str == null)
+                return false;
+
+            if (str == "" || str == TesterEnviorment.STR_NNNNN || str == TesterEnviorment.STR_NA)
+                return false;
+
+            return true;
+        }
+        static public void AdjustDataStringFormat(string[] data)
+        {
+            //수조온도  pH농도    염도  용존산소량   음극전위    양극전류
+            // skip 0 index 
+            data[1] = IsValidStr(data[1]) ? string.Format("{0:0.0}", Convert.ToDouble(data[1]) / 10) : STR_NA;
+            data[2] = IsValidStr(data[2]) ? string.Format("{0:0.0}", Convert.ToDouble(data[2]) / 10) : STR_NA;
+            data[3] = IsValidStr(data[3]) ? string.Format("{0:0.0}", Convert.ToDouble(data[3]) / 10) : STR_NA;
+            data[4] = IsValidStr(data[4]) ? string.Format("{0:0}", Convert.ToDouble(data[4])) : STR_NA;
+            data[5] = IsValidStr(data[5]) ? string.Format("{0:0.000}", Convert.ToDouble(data[5]) / 1000) : STR_NA;
+            data[6] = IsValidStr(data[6]) ? string.Format("{0:0.00}", Convert.ToDouble(data[6]) / 100) : STR_NA;
+
+            //data[1] = string.Format(0:0.0, data[1];
         }
     }
 }

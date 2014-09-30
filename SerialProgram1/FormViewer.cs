@@ -56,7 +56,7 @@ namespace SerialProgram
             try
             {
                 FileDialog fileDlg = new OpenFileDialog();
-                fileDlg.InitialDirectory = System.Environment.CurrentDirectory;
+                fileDlg.InitialDirectory = System.Environment.CurrentDirectory + "\\" + TesterEnviorment.PATH_COMPLETE;
                 fileDlg.Filter = "모든 파일 (*.*)|*.*";
                 fileDlg.RestoreDirectory = true;
                 if (fileDlg.ShowDialog() == DialogResult.OK)
@@ -68,6 +68,7 @@ namespace SerialProgram
                     try
                     {
                         int i = 0;
+                        List<string[]> fileDataList = new List<string[]>();
                         while (!sr.EndOfStream)
                         {
                             string s = sr.ReadLine();
@@ -83,8 +84,13 @@ namespace SerialProgram
                                                 , dr[2].ToString(), dr[3].ToString()
                                                 , dr[4].ToString(), dr[5].ToString()
                                                 , dr[6].ToString() };
-                            SetDataFromFile(row);
 
+                            fileDataList.Add(row);
+                        }
+
+                        for (int idx = fileDataList.Count - 1; idx >= 0; idx--)
+                        {
+                            SetDataFromFile(fileDataList[idx]);
                         }
                     }
                     catch(Exception ex)
@@ -108,42 +114,22 @@ namespace SerialProgram
 
             return;
         }
-        private bool IsValidStr(string str)
-        {
-            if (str == null)
-                return false;
-
-            if (str == "NNNN" || str == "NA")
-                return false;
-
-            return true;
-        }
-
         private void SetDataFromFile(string[] data)
         {
             if (data == null)
                 return;
 
-            string strGridTimestamp = IsValidStr(data[0]) ? data[0] : "NA";
-            string strGridTemperature = IsValidStr(data[1]) ? string.Format("{0:0.0}", Convert.ToDouble(data[1])) : "NA";
-            string strGridPH = IsValidStr(data[2]) ? string.Format("{0:0.0}", Convert.ToDouble(data[2])) : "NA";
-            string strGridSalt = IsValidStr(data[3]) ? string.Format("{0:0.0}", Convert.ToDouble(data[3])) : "NA";
-            string strGridOxgen = IsValidStr(data[4]) ? string.Format("{0:0.0}", Convert.ToDouble(data[4])) : "NA";
-            string strGridVolt = IsValidStr(data[5]) ? string.Format("{0:0.0}", Convert.ToDouble(data[5])) : "NA";
-            string strGridAmp = IsValidStr(data[6]) ? string.Format("{0:0.0}", Convert.ToDouble(data[6])) : "NA";
+            dataGridView1.Rows.Insert(0, data);
 
-            string[] gridData = {strGridTimestamp, strGridTemperature
-                , strGridPH, strGridSalt, strGridOxgen, strGridVolt, strGridAmp};
+            string EMPTY = TesterEnviorment.STR_EMPTY;
 
-            dataGridView1.Rows.Add(gridData);
-
-            string strTimestamp = IsValidStr(data[0]) ? data[0] : "";
-            string strTemperature = IsValidStr(data[1]) ? data[1] : "";
-            string strPH = IsValidStr(data[2]) ? data[2] : "";
-            string strSalt = IsValidStr(data[3]) ? data[3] : "";
-            string strOxgen = IsValidStr(data[4]) ? data[4] : "";
-            string strVolt = IsValidStr(data[5]) ? data[5] : "";
-            string strAmp = IsValidStr(data[6]) ? data[6] : "";
+            string strTimestamp = TesterEnviorment.IsValidStr(data[0]) ? data[0] : EMPTY;
+            string strTemperature = TesterEnviorment.IsValidStr(data[1]) ? data[1] : EMPTY;
+            string strPH = TesterEnviorment.IsValidStr(data[2]) ? data[2] : EMPTY;
+            string strSalt = TesterEnviorment.IsValidStr(data[3]) ? data[3] : EMPTY;
+            string strOxgen = TesterEnviorment.IsValidStr(data[4]) ? data[4] : EMPTY;
+            string strVolt = TesterEnviorment.IsValidStr(data[5]) ? data[5] : EMPTY;
+            string strAmp = TesterEnviorment.IsValidStr(data[6]) ? data[6] : EMPTY;
 
             chartTemperature.Series[0].Points.AddXY(strTimestamp, strTemperature);
             chartPH.Series[0].Points.AddXY(strTimestamp, strPH);
@@ -152,7 +138,6 @@ namespace SerialProgram
             chartVolt.Series[0].Points.AddXY(strTimestamp, strVolt);
             chartAmp.Series[0].Points.AddXY(strTimestamp, strAmp);
         }
-
         private void SetVisibleGraph(eGraphState graphState)
         {
             if (graphState == eGraphState.INVALID)

@@ -46,14 +46,11 @@ namespace SerialProgram
         {
             SetThreadExecutionState(EXECUTION_STATE.ES_DISPLAY_REQUIRED | EXECUTION_STATE.ES_CONTINUOUS | EXECUTION_STATE.ES_SYSTEM_REQUIRED);
         }
-
         // 절전/대기 모드 진입 허용
         private void AllowMonitorPowerdown()
         {
             SetThreadExecutionState(~EXECUTION_STATE.ES_DISPLAY_REQUIRED & EXECUTION_STATE.ES_CONTINUOUS & ~EXECUTION_STATE.ES_SYSTEM_REQUIRED);
         }
-
-
         public Form1()
         {
             InitializeComponent();
@@ -64,13 +61,14 @@ namespace SerialProgram
             testEnv.InitFromFile();
 
             dateTimeEnd.Format = DateTimePickerFormat.Custom;
-            dateTimeEnd.CustomFormat = "yyyy-MM-dd-HH:mm";
+            dateTimeEnd.CustomFormat = TesterEnviorment.DATETIME_FORMAT;
 
             if (testEnv.EnableRunTest())
             {
                 textBoxDelay.Text = testEnv.delay.ToString();
                 textBoxTarget.Text = testEnv.target;
-                dateTimeEnd.Value = Convert.ToDateTime(testEnv.endTime);
+                dateTimeEnd.Value = testEnv.endTime;
+                textBoxStartTime.Text = testEnv.startTime.ToString(TesterEnviorment.DATETIME_FORMAT);
             }
 
             this.Text = testEnv.appname;
@@ -113,18 +111,11 @@ namespace SerialProgram
             radioButtonTemperature.Checked = true;
         }
 
-        private bool IsValidStr(string str)
-        {
-            if (str == null)
-                return false;
 
-            if (str == "" || str == "NNNNN" || str == "NA")
-                return false;
-
-            return true;
-        }
         private void SetCurrentData(string[] data)
         {
+            TesterEnviorment.AdjustDataStringFormat(data);
+
             preRecvData = data;
 
             textBoxData_Time.Text = data[0];
@@ -136,65 +127,24 @@ namespace SerialProgram
             textBoxData_Amp.Text = data[6];
         }
 
-        private void SetDataFromFile(string[] data)
-        {
-            if (data == null)
-                return;
-
-            string strGridTimestamp = IsValidStr(data[0]) ? data[0] : "NA";
-            string strGridTemperature = IsValidStr(data[1]) ? string.Format("{0:0.0}", Convert.ToDouble(data[1])) : "NA";
-            string strGridPH = IsValidStr(data[2]) ? string.Format("{0:0.0}", Convert.ToDouble(data[2])) : "NA";
-            string strGridSalt = IsValidStr(data[3]) ? string.Format("{0:0.0}", Convert.ToDouble(data[3])) : "NA";
-            string strGridOxgen = IsValidStr(data[4]) ? string.Format("{0:0.0}", Convert.ToDouble(data[4])) : "NA";
-            string strGridVolt = IsValidStr(data[5]) ? string.Format("{0:0.0}", Convert.ToDouble(data[5])) : "NA";
-            string strGridAmp = IsValidStr(data[6]) ? string.Format("{0:0.0}", Convert.ToDouble(data[6])) : "NA";
-
-            string[] gridData = {strGridTimestamp, strGridTemperature
-                , strGridPH, strGridSalt, strGridOxgen, strGridVolt, strGridAmp};
-
-            dataGridView1.Rows.Add(gridData);
-
-            string strTimestamp = IsValidStr(data[0]) ? data[0] : "";
-            string strTemperature = IsValidStr(data[1]) ? data[1] : "";
-            string strPH = IsValidStr(data[2]) ? data[2] : "";
-            string strSalt = IsValidStr(data[3]) ? data[3] : "";
-            string strOxgen = IsValidStr(data[4]) ? data[4] : "";
-            string strVolt = IsValidStr(data[5]) ? data[5] : "";
-            string strAmp = IsValidStr(data[6]) ? data[6] : "";
-
-            chartTemperature.Series[0].Points.AddXY(strTimestamp, strTemperature);
-            chartPH.Series[0].Points.AddXY(strTimestamp, strPH);
-            chartSalt.Series[0].Points.AddXY(strTimestamp, strSalt);
-            chartOxgen.Series[0].Points.AddXY(strTimestamp, strOxgen);
-            chartVolt.Series[0].Points.AddXY(strTimestamp, strVolt);
-            chartAmp.Series[0].Points.AddXY(strTimestamp, strAmp);
-        }
-
         private void SetDataToUI(string[] data)
         {
             if (data == null)
                 return;
 
-            string strGridTimestamp = IsValidStr(data[0]) ? data[0] : "NA";
-            string strGridTemperature = IsValidStr(data[1]) ? string.Format("{0:0.0}", Convert.ToDouble(data[1])) : "NA";
-            string strGridPH = IsValidStr(data[2]) ? string.Format("{0:0.0}", Convert.ToDouble(data[2])) : "NA";
-            string strGridSalt = IsValidStr(data[3]) ? string.Format("{0:0.0}", Convert.ToDouble(data[3])) : "NA";
-            string strGridOxgen = IsValidStr(data[4]) ? string.Format("{0:0.0}", Convert.ToDouble(data[4])) : "NA";
-            string strGridVolt = IsValidStr(data[5]) ? string.Format("{0:0.0}", Convert.ToDouble(data[5])) : "NA";
-            string strGridAmp = IsValidStr(data[6]) ? string.Format("{0:0.0}", Convert.ToDouble(data[6])) : "NA";
+            string NA = TesterEnviorment.STR_NA;
 
-            string[] gridData = {strGridTimestamp, strGridTemperature
-                , strGridPH, strGridSalt, strGridOxgen, strGridVolt, strGridAmp};
+            dataGridView1.Rows.Insert(0, data);
 
-            dataGridView1.Rows.Insert(0, gridData);
+            string EMPTY = TesterEnviorment.STR_EMPTY;
 
-            string strTimestamp = IsValidStr(data[0]) ? data[0] : "";
-            string strTemperature = IsValidStr(data[1]) ? data[1] : "";
-            string strPH = IsValidStr(data[2]) ? data[2] : "";
-            string strSalt = IsValidStr(data[3]) ? data[3] : "";
-            string strOxgen = IsValidStr(data[4]) ? data[4] : "";
-            string strVolt = IsValidStr(data[5]) ? data[5] : "";
-            string strAmp = IsValidStr(data[6]) ? data[6] : "";
+            string strTimestamp = TesterEnviorment.IsValidStr(data[0]) ? data[0] : EMPTY;
+            string strTemperature = TesterEnviorment.IsValidStr(data[1]) ? data[1] : EMPTY;
+            string strPH = TesterEnviorment.IsValidStr(data[2]) ? data[2] : EMPTY;
+            string strSalt = TesterEnviorment.IsValidStr(data[3]) ? data[3] : EMPTY;
+            string strOxgen = TesterEnviorment.IsValidStr(data[4]) ? data[4] : EMPTY;
+            string strVolt = TesterEnviorment.IsValidStr(data[5]) ? data[5] : EMPTY;
+            string strAmp = TesterEnviorment.IsValidStr(data[6]) ? data[6] : EMPTY;
 
             chartTemperature.Series[0].Points.AddXY(strTimestamp, strTemperature);
             chartPH.Series[0].Points.AddXY(strTimestamp, strPH);
@@ -270,24 +220,20 @@ namespace SerialProgram
                 chartVolt.Visible = true;
             }
         }
-
         private void DisplayStatusbarMessage(string s)
         {
             toolStripStatusLabel1.Text = s;
         }
-        
         private void MessageNone(object sender, EventArgs e)
         {
             DisplayStatusbarMessage("");
         }
-        
         public string recieveSB;
         private void serialPort1_DataReceived(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
         {
             // 비동기로 넘긴다.
             this.Invoke(new EventHandler(recvData));
         }
-
         private void recvData(object sender, EventArgs e)
         {
             string str = "";
@@ -318,15 +264,16 @@ namespace SerialProgram
                 }
             }
         }
-
         private void HandleReadData(object s, EventArgs e)
         {
             // 누적된 데이터를 받고
             string recieveData = recieveSB.ToString();
 
-            this.RecvTextBox.AppendText(recieveData);
-            this.RecvTextBox.AppendText("\r\n");
-
+            if (TesterEnviorment.DEBUG_MODE == 1)
+            {
+                this.RecvTextBox.AppendText(recieveData);
+                this.RecvTextBox.AppendText("\r\n");
+            }
             // 누적 데이터를 없애고
             recieveSB = "";
             sendCnt--;
@@ -352,27 +299,19 @@ namespace SerialProgram
                 token += recieveData[i * 5 + 3];
                 token += recieveData[i * 5 + 4];
 
-                if (token.Equals("NNNNN"))
+                if (token.Equals(TesterEnviorment.STR_NNNNN))
                 {
-                    datas[i] = "";
+                    datas[i] = TesterEnviorment.STR_EMPTY;
                 }
                 else
                 {
-                    if (token.Length >= 2)
-                    {
-                        string value = token.Insert(token.Length - 1, ".");
-                        datas[i] = value;
-                    }
-                    else
-                    {
-                        datas[i] = token;
-                    }
+                    datas[i] = token;
                 }
 
                 token = "";
             }
 
-            //수조온도	pH농도	염도	용존산소량	음극전위, 양극전류
+            //수조온도  pH농도    염도  용존산소량   음극전위    양극전류
             string[] row = { DateTime.Now.ToString(dateTimeEnd.CustomFormat), datas[0], datas[1]
                                , datas[2], datas[3], datas[4], datas[5] };
 
@@ -380,10 +319,10 @@ namespace SerialProgram
 
             if (dataGridView1.Rows.Count == 1)
             {
-                TesterEnviorment.ConvertData(row, testEnv.startTime);
+                TesterEnviorment.ConvertDateTime(row, testEnv.startTime);
 
                 SetDataToUI(row);
-                SaveTofile(dataGridView1);
+                SaveTofile(dataGridView1, testEnv.fileName);
             }
 
             DisplayStatusbarMessage(string.Format("Serial Status: {0}", sendCnt));
@@ -392,7 +331,6 @@ namespace SerialProgram
         private void SetStateStartTest()
         {
             testEnv.working = true;
-            testEnv.startTime = DateTime.Now;
 
             timerSendPacket.Stop();
             timerSaveToFile.Stop();
@@ -406,9 +344,6 @@ namespace SerialProgram
 
                 timerSaveToFile.Interval = 60 * 1000;
                 timerSaveToFile.Start();
-
-                testEnv.endTime = testEnv.startTime.AddMinutes(2);
-                dateTimeEnd.Value = testEnv.endTime;
             }
             else
             {
@@ -447,7 +382,6 @@ namespace SerialProgram
             testEnv.target = textBoxTarget.Text;
             testEnv.delay = Convert.ToInt32(textBoxDelay.Text.ToString());
             testEnv.endTime = dateTimeEnd.Value;
-            testEnv.startTime = DateTime.Now;
 
             textBoxTarget.Text = testEnv.target;
             textBoxDelay.Text = testEnv.delay.ToString();
@@ -550,18 +484,20 @@ namespace SerialProgram
                         try
                         {
                             InitUIControl();
-
                             // 이어하기
                             LoadFromFile();
 
+                            textBoxStartTime.Text = testEnv.startTime.ToString(
+                                TesterEnviorment.DATETIME_FORMAT);
                             textBoxTarget.Text = testEnv.target;
                             textBoxDelay.Text = testEnv.delay.ToString();
                             dateTimeEnd.Value = testEnv.endTime;
+
                             SetStateStartTest();
                         }
                         catch (Exception ex)
                         {
-                            ModalessMsgBox(ex.Message);
+                            MessageBox.Show(ex.Message);
                         }
                     }
                     else
@@ -576,6 +512,7 @@ namespace SerialProgram
                         textBoxTarget.Text = testEnv.target;
                         textBoxDelay.Text = testEnv.delay.ToString();
                         dateTimeEnd.Value = testEnv.endTime;
+                        textBoxStartTime.Text = testEnv.startTime.ToString(TesterEnviorment.DATETIME_FORMAT);
                     }
 
                     return;
@@ -590,13 +527,13 @@ namespace SerialProgram
                         , "기록 종료", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
                         == DialogResult.Yes)
                     {
+                        SaveTofile(dataGridView1, testEnv.completedFilePath);
+
                         SetStateStopTest();
                     }
 
                     return;
                 }
-
-                UpdateTestEnv();
                 
                 if (testEnv.EnableRunTest())
                 {
@@ -606,6 +543,11 @@ namespace SerialProgram
                     {
                         InitUIControl();
 
+                        testEnv.startTime = DateTime.Now;
+                        textBoxStartTime.Text = testEnv.startTime.ToString(TesterEnviorment.DATETIME_FORMAT);
+
+                        UpdateTestEnv();
+
                         SetStateStartTest();
                     }
 
@@ -613,7 +555,7 @@ namespace SerialProgram
                 }
                 else
                 {
-                    ModalessMsgBox("기록 설정이 잘못 되었습니다.");
+                    MessageBox.Show("기록 설정이 잘못 되었습니다.");
                     return;
                 }
             }
@@ -682,7 +624,6 @@ namespace SerialProgram
 
             AllowMonitorPowerdown();
         }
-
         private void textBoxDelay_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (!(Char.IsDigit(e.KeyChar) || e.KeyChar == Convert.ToChar(Keys.Back)))
@@ -690,7 +631,6 @@ namespace SerialProgram
                 e.Handled = true;
             }
         }
-
         private void textBoxTarget_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (!(Char.IsLetterOrDigit(e.KeyChar) || e.KeyChar == Convert.ToChar(Keys.Back)))
@@ -698,9 +638,8 @@ namespace SerialProgram
                 e.Handled = true;
             }
         }
-        
         private SaveFileDialog saveFileDialog = new SaveFileDialog();
-        public void SaveTofile(DataGridView myDataGridView)
+        public void SaveTofile(DataGridView myDataGridView, string path)
         {
             //test to see if the DataGridView has any rows
             if (myDataGridView.RowCount > 0)
@@ -709,8 +648,17 @@ namespace SerialProgram
                 {
                     string value = "";
                     DataGridViewRow dr = new DataGridViewRow();
-                    StreamWriter swOut = new StreamWriter(
-                        System.Environment.CurrentDirectory + "\\" + testEnv.fileName + ".csv", false, Encoding.UTF8);
+
+                    string sDirPath;
+                    sDirPath = System.Environment.CurrentDirectory + "\\Completed\\";
+                    DirectoryInfo di = new DirectoryInfo(sDirPath);
+                    if (di.Exists == false)
+                    {
+                        di.Create();
+                    }
+
+                    FileStream fStream = new FileStream(path, FileMode.OpenOrCreate);
+                    StreamWriter swOut = new StreamWriter(fStream, Encoding.UTF8);
 
                     //write header rows to csv
                     for (int i = 0; i <= myDataGridView.Columns.Count - 1; i++)
@@ -753,7 +701,6 @@ namespace SerialProgram
                             swOut.Write(value);
                         }
                     }
-
                     swOut.Close();
                 }
                 catch(Exception ex)
@@ -762,39 +709,20 @@ namespace SerialProgram
                 }
             }
         }
-        private static void ReleaseExcelObject(object obj)
-        {
-            try
-            {
-                if (obj != null)
-                {
-                    Marshal.ReleaseComObject(obj);
-                    obj = null;
-                }
-            }
-            catch (Exception ex)
-            {
-                obj = null;
-                throw ex;
-            }
-            finally
-            {
-                GC.Collect();
-            }
-        }
         void OnTimeSaveToFile(object sender, EventArgs e)
         {
             string[] dump = (string[])preRecvData.Clone();
-            TesterEnviorment.ConvertData(dump, testEnv.startTime);
+            TesterEnviorment.ConvertDateTime(dump, testEnv.startTime);
 
             SetDataToUI(dump);
-            SaveTofile(dataGridView1);
+            SaveTofile(dataGridView1, testEnv.fileName);
         }
         void OnTimeSendPacket(object sender, EventArgs e)
         {
             if (DateTime.Now > testEnv.endTime)
             {
                 SetStateStopTest();
+                SaveTofile(dataGridView1, testEnv.completedFilePath);
 
                 MessageBox.Show("시험이 완료되었습니다.");
 
@@ -839,18 +767,19 @@ namespace SerialProgram
 
             if (TesterEnviorment.DEBUG_MODE == 1)
             {
-                string[] row = { DateTime.Now.ToString(dateTimeEnd.CustomFormat), "1", "2.000"
-                               , "NNNNN", "NNNNN", "2.000", "2.000" };
+                //수조온도  pH농도    염도  용존산소량   음극전위    양극전류
+                string[] row = { DateTime.Now.ToString(dateTimeEnd.CustomFormat), "-0023", " 0076"
+                               , "-2000", "-1234", " 0040", " 0201" };
 
                 SetCurrentData(row);
                 sendCnt--;
 
                 if (dataGridView1.Rows.Count == 1)
                 {
-                    TesterEnviorment.ConvertData(row, testEnv.startTime);
+                    TesterEnviorment.ConvertDateTime(row, testEnv.startTime);
 
                     SetDataToUI(row);
-                    SaveTofile(dataGridView1);
+                    SaveTofile(dataGridView1, testEnv.fileName);
                 }
             }
 
@@ -876,12 +805,15 @@ namespace SerialProgram
 
         public void LoadFromFile()
         {
-            FileStream inStream = new FileStream(testEnv.fileName + ".csv", FileMode.OpenOrCreate);
+            string path = System.Environment.CurrentDirectory + "\\" + testEnv.fileName;
+            FileStream inStream = new FileStream(path, FileMode.OpenOrCreate);
             StreamReader sr = new StreamReader(inStream, Encoding.UTF8);
 
             try
             {
                 int i = 0;
+                List<string[]> fileDataList = new List<string[]>();
+
                 while (!sr.EndOfStream)
                 {
                     string s = sr.ReadLine();
@@ -898,7 +830,12 @@ namespace SerialProgram
                                         , dr[4].ToString(), dr[5].ToString()
                                         , dr[6].ToString() };
 
-                    SetDataFromFile(row);
+                    fileDataList.Add(row);
+                }
+
+                for(int idx = fileDataList.Count - 1; idx >= 0 ; idx--)
+                {
+                    SetDataToUI(fileDataList[idx]);
                 }
             }
             catch(Exception ex)
@@ -928,20 +865,16 @@ namespace SerialProgram
             e.Graphics.FillRectangle(Brushes.Red,
               new Rectangle(500, 500, 500, 500));
         }
-
-
         // 전위
         private void radioButtonAmp_CheckedChanged(object sender, EventArgs e)
         {
             SetVisibleGraph(eGraphState.AMP);
         }
-
         // 온도
         private void radioButtonTemperature_CheckedChanged(object sender, EventArgs e)
         {
             SetVisibleGraph(eGraphState.TEMPERATURE);
         }
-
         // ph농도
         private void radioButtonPH_CheckedChanged(object sender, EventArgs e)
         {
@@ -951,17 +884,14 @@ namespace SerialProgram
         {
             SetVisibleGraph(eGraphState.SALT);
         }
-
         private void radioButtonOxgen_CheckedChanged(object sender, EventArgs e)
         {
             SetVisibleGraph(eGraphState.OXGEN);
         }
-
         private void radioButtonVolt_CheckedChanged(object sender, EventArgs e)
         {
             SetVisibleGraph(eGraphState.VOLT);
         }
-
         private void buttonViewer_Click(object sender, EventArgs e)
         {
             viewer = new FormViewer();
