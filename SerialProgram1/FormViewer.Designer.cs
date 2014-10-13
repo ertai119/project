@@ -53,7 +53,6 @@
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea6 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             System.Windows.Forms.DataVisualization.Charting.Legend legend6 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             System.Windows.Forms.DataVisualization.Charting.Series series6 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            
             this.chartAmp = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.radioButtonVolt = new System.Windows.Forms.RadioButton();
@@ -76,7 +75,6 @@
             this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-
             this.chartPH = new System.Windows.Forms.DataVisualization.Charting.Chart();
             ((System.ComponentModel.ISupportInitialize)(this.chartAmp)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -212,7 +210,7 @@
             series2.BorderWidth = 3;
             series2.ChartArea = "ChartArea1";
             series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series2.Color = System.Drawing.Color.Blue;
+            series2.Color = System.Drawing.Color.Chocolate;
             series2.Legend = "Legend1";
             series2.Name = "음극전위";
             this.chartVolt.Series.Add(series2);
@@ -234,7 +232,7 @@
             series3.BorderWidth = 3;
             series3.ChartArea = "ChartArea1";
             series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series3.Color = System.Drawing.Color.Blue;
+            series3.Color = System.Drawing.Color.Green;
             series3.LabelBorderColor = System.Drawing.Color.Blue;
             series3.LabelBorderWidth = 3;
             series3.LabelForeColor = System.Drawing.Color.Blue;
@@ -260,7 +258,7 @@
             series4.BorderWidth = 3;
             series4.ChartArea = "ChartArea1";
             series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series4.Color = System.Drawing.Color.Blue;
+            series4.Color = System.Drawing.Color.Red;
             series4.Legend = "Legend1";
             series4.Name = "염도";
             this.chartSalt.Series.Add(series4);
@@ -276,16 +274,14 @@
             chartArea5.Name = "ChartArea1";
             this.chartTemperature.ChartAreas.Add(chartArea5);
             legend5.Name = "Legend1";
-
             this.chartTemperature.Legends.Add(legend5);
             this.chartTemperature.Location = new System.Drawing.Point(777, 6);
             this.chartTemperature.Name = "chartTemperature";
             series5.BorderWidth = 3;
             series5.ChartArea = "ChartArea1";
             series5.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series5.Color = System.Drawing.Color.Blue;
+            series5.Color = System.Drawing.Color.Cyan;
             series5.Legend = "Legend1";
-
             series5.Name = "온도";
             this.chartTemperature.Series.Add(series5);
             this.chartTemperature.Size = new System.Drawing.Size(633, 660);
@@ -412,7 +408,7 @@
             series6.BorderWidth = 3;
             series6.ChartArea = "ChartArea1";
             series6.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series6.Color = System.Drawing.Color.Blue;
+            series6.Color = System.Drawing.Color.Orange;
             series6.Legend = "Legend1";
             series6.Name = "PH";
             this.chartPH.Series.Add(series6);

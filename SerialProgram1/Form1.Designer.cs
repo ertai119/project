@@ -174,7 +174,7 @@
             series2.BorderWidth = 3;
             series2.ChartArea = "ChartArea1";
             series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series2.Color = System.Drawing.Color.Blue;
+            series2.Color = System.Drawing.Color.Chocolate;
             series2.Legend = "Legend1";
             series2.Name = "음극전위";
             this.chartVolt.Series.Add(series2);
@@ -196,7 +196,7 @@
             series3.BorderWidth = 3;
             series3.ChartArea = "ChartArea1";
             series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series3.Color = System.Drawing.Color.Blue;
+            series3.Color = System.Drawing.Color.Green;
             series3.Legend = "Legend1";
             series3.Name = "용존산소량";
             this.chartOxgen.Series.Add(series3);
@@ -218,7 +218,7 @@
             series4.BorderWidth = 3;
             series4.ChartArea = "ChartArea1";
             series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series4.Color = System.Drawing.Color.Blue;
+            series4.Color = System.Drawing.Color.Red;
             series4.Legend = "Legend1";
             series4.Name = "염도";
             this.chartSalt.Series.Add(series4);
@@ -240,7 +240,7 @@
             series5.BorderWidth = 3;
             series5.ChartArea = "ChartArea1";
             series5.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series5.Color = System.Drawing.Color.Blue;
+            series5.Color = System.Drawing.Color.Orange;
             series5.Legend = "Legend1";
             series5.Name = "PH";
             this.chartPH.Series.Add(series5);
@@ -262,7 +262,7 @@
             series6.BorderWidth = 3;
             series6.ChartArea = "ChartArea1";
             series6.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series6.Color = System.Drawing.Color.Blue;
+            series6.Color = System.Drawing.Color.Cyan;
             series6.Legend = "Legend1";
             series6.Name = "온도";
             this.chartTemperature.Series.Add(series6);
