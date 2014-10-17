@@ -322,7 +322,7 @@ namespace SerialProgram
                 TesterEnviorment.ConvertDateTime(row, testEnv.startTime);
 
                 SetDataToUI(row);
-                SaveTofile(dataGridView1, testEnv.fileName);
+                SaveTofile(dataGridView1, testEnv.fileName, true);
             }
 
             DisplayStatusbarMessage(string.Format("Serial Status: {0}", sendCnt));
@@ -527,7 +527,7 @@ namespace SerialProgram
                         , "기록 종료", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
                         == DialogResult.Yes)
                     {
-                        SaveTofile(dataGridView1, testEnv.completedFilePath);
+                        SaveTofile(dataGridView1, testEnv.completedFilePath, false);
 
                         SetStateStopTest();
                     }
@@ -639,7 +639,7 @@ namespace SerialProgram
             }
         }
         private SaveFileDialog saveFileDialog = new SaveFileDialog();
-        public void SaveTofile(DataGridView myDataGridView, string path)
+        public void SaveTofile(DataGridView myDataGridView, string path, bool usingTempFolder)
         {
             //test to see if the DataGridView has any rows
             if (myDataGridView.RowCount > 0)
@@ -657,7 +657,14 @@ namespace SerialProgram
                         di.Create();
                     }
 
-                    FileStream fStream = new FileStream(path, FileMode.OpenOrCreate);
+                    sDirPath = System.Environment.CurrentDirectory + "\\Temp\\";
+                    DirectoryInfo di1 = new DirectoryInfo(sDirPath);
+                    if (di1.Exists == false)
+                    {
+                        di1.Create();
+                    }
+
+                    FileStream fStream = new FileStream(usingTempFolder ? "Temp\\" + path : path, FileMode.OpenOrCreate);
                     StreamWriter swOut = new StreamWriter(fStream, Encoding.UTF8);
 
                     //write header rows to csv
@@ -715,14 +722,14 @@ namespace SerialProgram
             TesterEnviorment.ConvertDateTime(dump, testEnv.startTime);
 
             SetDataToUI(dump);
-            SaveTofile(dataGridView1, testEnv.fileName);
+            SaveTofile(dataGridView1, testEnv.fileName, true);
         }
         void OnTimeSendPacket(object sender, EventArgs e)
         {
             if (DateTime.Now > testEnv.endTime)
             {
                 SetStateStopTest();
-                SaveTofile(dataGridView1, testEnv.completedFilePath);
+                SaveTofile(dataGridView1, testEnv.completedFilePath, false);
 
                 MessageBox.Show("시험이 완료되었습니다.");
 
@@ -779,7 +786,7 @@ namespace SerialProgram
                     TesterEnviorment.ConvertDateTime(row, testEnv.startTime);
 
                     SetDataToUI(row);
-                    SaveTofile(dataGridView1, testEnv.fileName);
+                    SaveTofile(dataGridView1, testEnv.fileName, true);
                 }
             }
 
@@ -805,7 +812,7 @@ namespace SerialProgram
 
         public void LoadFromFile()
         {
-            string path = System.Environment.CurrentDirectory + "\\" + testEnv.fileName;
+            string path = System.Environment.CurrentDirectory + "\\Temp\\" + testEnv.fileName;
             FileStream inStream = new FileStream(path, FileMode.OpenOrCreate);
             StreamReader sr = new StreamReader(inStream, Encoding.UTF8);
 
