@@ -120,6 +120,10 @@ namespace SerialProgram
                     {
                         DEBUG_MODE = Convert.ToInt32(value);
                     }
+                    else if (token == "PORT")
+                    {
+                        descPort = tokens[1];
+                    }
                 }
 
                 inStream.Close();
@@ -144,6 +148,7 @@ namespace SerialProgram
                 sw.WriteLine("LOCAL_VALUE=" + localValue.ToUpper());
                 sw.WriteLine("APP_NAME=" + appname);
                 sw.WriteLine("DEBUG_MODE=" + DEBUG_MODE);
+                sw.WriteLine("PORT=" + descPort);
 
                 sw.Close();
             }

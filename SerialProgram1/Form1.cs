@@ -56,9 +56,14 @@ namespace SerialProgram
             InitializeComponent();
             
             testEnv.descPort = Rs232Utils.PortDescString(serialPort1);
-            DisplayStatusbarMessage(testEnv.descPort);
-
             testEnv.InitFromFile();
+
+            if (Rs232Utils.IsValidPortDescString(testEnv.descPort))
+            {
+                SyncSerialPort();
+            }
+
+            DisplayStatusbarMessage(testEnv.descPort);
 
             dateTimeEnd.Format = DateTimePickerFormat.Custom;
             dateTimeEnd.CustomFormat = TesterEnviorment.DATETIME_FORMAT;
@@ -325,7 +330,7 @@ namespace SerialProgram
                 SaveTofile(dataGridView1, testEnv.fileName, true);
             }
 
-            DisplayStatusbarMessage(string.Format("Serial Status: {0}", sendCnt));
+            DisplayStatusbarMessage(string.Format("Serial Status: {0} RecvData: {1}", sendCnt, recieveData));
         }
 
         private void SetStateStartTest()
@@ -415,6 +420,37 @@ namespace SerialProgram
 
             AdjustBtnText();
         }
+        private void SyncSerialPort()
+        {
+            if (serialPort1.IsOpen)
+            {
+                testEnv.connected = false;
+                serialPort1.Close();
+            }
+
+            Rs232Utils.SetPortDescString(serialPort1,testEnv.descPort);
+
+            try
+            {
+                if (TesterEnviorment.DEBUG_MODE != 1)
+                {
+                    serialPort1.Open();
+                }
+
+                DisplayStatusbarMessage(testEnv.descPort);
+
+                testEnv.connected = true;
+                sendCnt = 0;
+
+                AdjustBtnText();
+            }
+            catch (Exception ex)
+            {
+                testEnv.connected = false;
+
+                MessageBox.Show(ex.Message);
+            }
+        }
         private void buttonPortSetting_Click(object sender, EventArgs e)
         {
             using (ComportSettingDialog csd = new ComportSettingDialog())
@@ -423,41 +459,14 @@ namespace SerialProgram
                 csd.PortDescString = testEnv.descPort;
                 if (csd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
-                    if (serialPort1.IsOpen)
-                    {
-                        testEnv.connected = false;
-                        serialPort1.Close();
-                    }
-
-                    Rs232Utils.SetPortDescString(serialPort1, csd.PortDescString);
                     testEnv.descPort = csd.PortDescString;
-
-                    try
-                    {
-                        if (TesterEnviorment.DEBUG_MODE != 1)
-                        {
-                            serialPort1.Open();
-                        }
-
-                        DisplayStatusbarMessage(testEnv.descPort);
-
-                        testEnv.connected = true;
-                        sendCnt = 0;
-
-                        AdjustBtnText();
-                    }
-                    catch (Exception ex)
-                    {
-                        testEnv.connected = false;
-
-                        MessageBox.Show(ex.Message);
-                    }
+                    SyncSerialPort();
                 }
             }
         }
         private void UpdateTestEnv()
         {
-            testEnv.delay = textBoxDelay.Text != "" ? Convert.ToInt32(textBoxDelay.Text) : 0;
+            testEnv.delay = textBoxDelay.Text != "" ? Convert.ToInt32(textBoxDelay.Text) : 1;
             testEnv.endTime = dateTimeEnd.Value;
             testEnv.target = textBoxTarget.Text;
 
@@ -505,8 +514,8 @@ namespace SerialProgram
                         InitUIControl();
 
                         testEnv.target = "";
-                        testEnv.delay = 0;
-                        testEnv.endTime = DateTime.Now;
+                        testEnv.delay = 1;
+                        testEnv.endTime = DateTime.Now.AddDays(1);
                         testEnv.startTime = DateTime.Now;
 
                         textBoxTarget.Text = testEnv.target;
@@ -563,7 +572,7 @@ namespace SerialProgram
             {
                 if (testEnv.working == false)
                 {
-                    ModalessMsgBox("포트가 연결되지 않았습니다.");
+                    ModalessMsgBox("장치와 연결이 되지 않았습니다.");
                 }
                 else
                 {
@@ -750,7 +759,7 @@ namespace SerialProgram
             {
                 if (testEnv.connected == true)
                 {
-                    ModalessMsgBox("포트가 끊겼습니다.");
+                    ModalessMsgBox("장치와의 연결이 끊겼습니다.");
                 }
 
                 testEnv.connected = false;
@@ -759,7 +768,7 @@ namespace SerialProgram
                 if (preRecvData != null)
                 {
                     preRecvData[0] = DateTime.Now.ToString(dateTimeEnd.CustomFormat);
-                    textBoxData_Time.Text = preRecvData.ToString();
+                    textBoxData_Time.Text = preRecvData[0].ToString();
                 }
 
                 return;
@@ -805,7 +814,7 @@ namespace SerialProgram
                 serialPort1.Write(buffer, 0, buffer.Length);
             }
 
-            DisplayStatusbarMessage(string.Format("Serial Status: {0}", sendCnt));
+            DisplayStatusbarMessage(string.Format("Serial Status: {0} Send Data: {1}", sendCnt, Rs232Utils.ByteArrayToHexString(buffer) ));
 
             SendTextBox.Text += Rs232Utils.ByteArrayToHexString(buffer) + "\r\n";
         }

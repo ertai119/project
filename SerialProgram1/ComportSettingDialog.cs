@@ -17,7 +17,6 @@ namespace SerialProgram
         {
             get
             {
-
                 return string.Format("{0}-{1}-{2}-{3}-{4}-{5}",
                     cboPortName.Text,
                     cboBaudrate.Text,
@@ -38,7 +37,6 @@ namespace SerialProgram
                     cboStopbits.Text = tmp[4];
                     cboFlowControl.Text = tmp[5];
                 }
-
             }
         }
        
