@@ -95,7 +95,7 @@ namespace SerialProgram
             timerSaveToFile.Tick += new EventHandler(OnTimeSaveToFile);
 
             radioButtonTemperature.Checked = true;
-            serialPort1.ReceivedBytesThreshold = 1;
+            //serialPort1.ReceivedBytesThreshold = 1;
 
             object[] AllGraph = { chartTemperature, chartSalt, chartOxgen, chartAmp, chartVolt, chartPH };
             foreach (System.Windows.Forms.DataVisualization.Charting.Chart chart in AllGraph)
@@ -407,6 +407,16 @@ namespace SerialProgram
             textBoxDelay.Enabled = true;
             dateTimeEnd.Enabled = true;
 
+            testEnv.target = "";
+            testEnv.delay = 1;
+            testEnv.endTime = DateTime.Now.AddDays(1);
+            testEnv.startTime = DateTime.Now;
+
+            textBoxTarget.Text = testEnv.target;
+            textBoxDelay.Text = testEnv.delay.ToString();
+            dateTimeEnd.Value = testEnv.endTime;
+            textBoxStartTime.Text = testEnv.startTime.ToString(TesterEnviorment.DATETIME_FORMAT);
+
             AdjustBtnText();
         }
         private void SetStateTestSetting()
@@ -600,16 +610,6 @@ namespace SerialProgram
                         SaveTofile(dataGridView1, testEnv.completedFilePath, false);
 
                         SetStateStopTest();
-
-                        testEnv.target = "";
-                        testEnv.delay = 1;
-                        testEnv.endTime = DateTime.Now.AddDays(1);
-                        testEnv.startTime = DateTime.Now;
-
-                        textBoxTarget.Text = testEnv.target;
-                        textBoxDelay.Text = testEnv.delay.ToString();
-                        dateTimeEnd.Value = testEnv.endTime;
-                        textBoxStartTime.Text = testEnv.startTime.ToString(TesterEnviorment.DATETIME_FORMAT);
                     }
 
                     return;
@@ -725,29 +725,32 @@ namespace SerialProgram
             //test to see if the DataGridView has any rows
             if (myDataGridView.RowCount > 0)
             {
+                string value = "";
+                DataGridViewRow dr = new DataGridViewRow();
+
+                string sDirPath;
+                sDirPath = System.Environment.CurrentDirectory + "\\Completed\\";
+                DirectoryInfo di = new DirectoryInfo(sDirPath);
+                if (di.Exists == false)
+                {
+                    di.Create();
+                }
+
+                sDirPath = System.Environment.CurrentDirectory + "\\Temp\\";
+                DirectoryInfo di1 = new DirectoryInfo(sDirPath);
+                if (di1.Exists == false)
+                {
+                    di1.Create();
+                }
+
+                FileStream fStream;
+                StreamWriter swOut; 
+
                 try
                 {
-                    string value = "";
-                    DataGridViewRow dr = new DataGridViewRow();
-
-                    string sDirPath;
-                    sDirPath = System.Environment.CurrentDirectory + "\\Completed\\";
-                    DirectoryInfo di = new DirectoryInfo(sDirPath);
-                    if (di.Exists == false)
-                    {
-                        di.Create();
-                    }
-
-                    sDirPath = System.Environment.CurrentDirectory + "\\Temp\\";
-                    DirectoryInfo di1 = new DirectoryInfo(sDirPath);
-                    if (di1.Exists == false)
-                    {
-                        di1.Create();
-                    }
-
-                    FileStream fStream = new FileStream(usingTempFolder ? "Temp\\" + path : path, FileMode.OpenOrCreate);
-                    StreamWriter swOut = new StreamWriter(fStream, Encoding.UTF8);
-
+                    fStream = new FileStream(usingTempFolder ? "Temp\\" + path : path, FileMode.OpenOrCreate);
+                    swOut = new StreamWriter(fStream, Encoding.UTF8);
+ 
                     //write header rows to csv
                     for (int i = 0; i <= myDataGridView.Columns.Count - 1; i++)
                     {
@@ -790,6 +793,7 @@ namespace SerialProgram
                         }
                     }
                     swOut.Close();
+                    fStream.Close();
                 }
                 catch(Exception ex)
                 {
@@ -820,16 +824,6 @@ namespace SerialProgram
                 return;
             }
 
-            if (TesterEnviorment.DEBUG_MODE != 1)
-            {
-                if (!serialPort1.IsOpen)
-                {
-                    testEnv.connected = false;
-                    serialPort1.Close();
-                    return;
-                }
-            }
-
             if (sendCnt != 0)
             {
                 if (testEnv.connected == true)
@@ -853,6 +847,9 @@ namespace SerialProgram
         private void SendPacket()
         {
             sendCnt++;
+
+            if (serialPort1.IsOpen == false)
+                return;
 
             if (TesterEnviorment.DEBUG_MODE == 1)
             {
