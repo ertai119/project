@@ -43,30 +43,31 @@ namespace SerialProgram
         static public string DATETIME_FORMAT = "yyyy년_MM월_dd일_HH시mm분";
         public string localValue { get; set; }
         public string localId { get; set; }
-        public bool EnableRunTest()
+        public enum eRunState { SUCCESS, INVALID_ENDTIME, INVALID_DELAY, INVALID_WORKING, INVALID_TARGET, INVALID_TARGET_LENGTH, INVALID_LOCALID, INVALID_LOCAL_VALUE}
+        public eRunState EnableRunTest()
         {
             if (DateTime.Now >= endTime)
-                return false;
+                return eRunState.INVALID_ENDTIME;
 
             if (delay <= 0)
-                return false;
+                return eRunState.INVALID_DELAY;
 
             if (working == true)
-                return false;
+                return eRunState.INVALID_WORKING;
 
             if (target == null)
-                return false;
+                return eRunState.INVALID_TARGET;
 
             if (target.Length <= 0)
-                return false;
+                return eRunState.INVALID_TARGET_LENGTH;
 
             if (localId == null || localId.Length <= 0)
-                return false;
+                return eRunState.INVALID_LOCALID;
 
             if (localValue == null || localValue.Length <= 0)
-                return false;
+                return eRunState.INVALID_LOCAL_VALUE;
 
-            return true;
+            return eRunState.SUCCESS;
         }
         public void InitFromFile()
         {
@@ -126,6 +127,7 @@ namespace SerialProgram
                     }
                 }
 
+                reader.Close();
                 inStream.Close();
             }
             catch(Exception e)
@@ -138,7 +140,8 @@ namespace SerialProgram
             string path = System.Environment.CurrentDirectory + "\\" + "config.txt";
             try
             {
-                StreamWriter sw = new StreamWriter(path, false, Encoding.UTF8);
+                FileStream inStream = new FileStream(path, FileMode.OpenOrCreate);
+                StreamWriter sw = new StreamWriter(inStream, Encoding.UTF8);
 
                 sw.WriteLine("DELAY=" + delay.ToString());
                 sw.WriteLine("ENDTIME=" + endTime.ToString());
@@ -151,6 +154,7 @@ namespace SerialProgram
                 sw.WriteLine("PORT=" + descPort);
 
                 sw.Close();
+                inStream.Close();
             }
             catch (Exception e)
             {
@@ -185,7 +189,7 @@ namespace SerialProgram
             data[1] = IsValidStr(data[1]) ? string.Format("{0:0.0}", Convert.ToDouble(data[1]) / 10) : STR_NA;
             data[2] = IsValidStr(data[2]) ? string.Format("{0:0.0}", Convert.ToDouble(data[2]) / 10) : STR_NA;
             data[3] = IsValidStr(data[3]) ? string.Format("{0:0.0}", Convert.ToDouble(data[3]) / 10) : STR_NA;
-            data[4] = IsValidStr(data[4]) ? string.Format("{0:0}", Convert.ToDouble(data[4])) : STR_NA;
+            data[4] = IsValidStr(data[4]) ? string.Format("{0:0.0}", Convert.ToDouble(data[4]) / 10) : STR_NA;
             data[5] = IsValidStr(data[5]) ? string.Format("{0:0.000}", Convert.ToDouble(data[5]) / 1000) : STR_NA;
             data[6] = IsValidStr(data[6]) ? string.Format("{0:0.00}", Convert.ToDouble(data[6]) / 100) : STR_NA;
 

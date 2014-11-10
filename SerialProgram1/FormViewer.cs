@@ -35,6 +35,12 @@ namespace SerialProgram
                 chart.Series[0].IsValueShownAsLabel = false;
                 chart.Legends[0].Enabled = true;
             }
+            
+            for (int i = 0; i < 7; i++)
+            {
+                dataGridView1.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+                dataGridView1.Columns[i].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            }
 
             SetVisibleGraph(eGraphState.TEMPERATURE);
         }

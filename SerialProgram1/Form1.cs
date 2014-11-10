@@ -51,6 +51,12 @@ namespace SerialProgram
         {
             SetThreadExecutionState(~EXECUTION_STATE.ES_DISPLAY_REQUIRED & EXECUTION_STATE.ES_CONTINUOUS & ~EXECUTION_STATE.ES_SYSTEM_REQUIRED);
         }
+
+        public DateTime getBuildDateTime2()
+        {
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            return System.IO.File.GetLastWriteTime(assembly.Location);
+        }
         public Form1()
         {
             InitializeComponent();
@@ -68,20 +74,24 @@ namespace SerialProgram
             dateTimeEnd.Format = DateTimePickerFormat.Custom;
             dateTimeEnd.CustomFormat = TesterEnviorment.DATETIME_FORMAT;
 
-            if (testEnv.EnableRunTest())
+            if (testEnv.EnableRunTest() == 0)
             {
                 textBoxDelay.Text = testEnv.delay.ToString();
                 textBoxTarget.Text = testEnv.target;
                 dateTimeEnd.Value = testEnv.endTime;
                 textBoxStartTime.Text = testEnv.startTime.ToString(TesterEnviorment.DATETIME_FORMAT);
             }
+            else
+            {
+                textBoxDelay.Text = "1";
+                textBoxTarget.Text = "";
+            }
 
-            this.Text = testEnv.appname;
+            this.Text = String.Format("{0} [Build : {1}]" , testEnv.appname ,getBuildDateTime2().ToString());
 
             AdjustBtnText();
             timerSendPacket.Interval = 1000;
             timerSendPacket.Tick += new EventHandler(OnTimeSendPacket);
-
             timerSaveToFile.Tick += new EventHandler(OnTimeSaveToFile);
 
             radioButtonTemperature.Checked = true;
@@ -101,8 +111,13 @@ namespace SerialProgram
                 chart.Series[0].IsValueShownAsLabel = false;
                 chart.Legends[0].Enabled = true;
             }
-        }
 
+            for (int i = 0; i < 7; i++)
+            {
+                dataGridView1.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+                dataGridView1.Columns[i].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            }
+        }
         private void InitUIControl()
         {
             object[] AllGraph = { chartTemperature, chartPH, chartSalt, chartOxgen, chartVolt, chartAmp };
@@ -115,8 +130,6 @@ namespace SerialProgram
 
             radioButtonTemperature.Checked = true;
         }
-
-
         private void SetCurrentData(string[] data)
         {
             TesterEnviorment.AdjustDataStringFormat(data);
@@ -131,7 +144,6 @@ namespace SerialProgram
             textBoxData_Volt.Text = data[5];
             textBoxData_Amp.Text = data[6];
         }
-
         private void SetDataToUI(string[] data)
         {
             if (data == null)
@@ -158,7 +170,6 @@ namespace SerialProgram
             chartVolt.Series[0].Points.AddXY(strTimestamp, strVolt);
             chartAmp.Series[0].Points.AddXY(strTimestamp, strAmp);
         }
-
         private void SetVisibleGraph(eGraphState graphState)
         {
             if (graphState == eGraphState.INVALID)
@@ -241,98 +252,116 @@ namespace SerialProgram
         }
         private void recvData(object sender, EventArgs e)
         {
-            string str = "";
-            str = Convert.ToString(serialPort1.ReadByte(), 16).ToUpper();
-            if (str.Equals(Rs232Utils.ByteToHex(Rs232Utils.STX)))
+            try
             {
-                // Local ID MSB
+                string str = "";
                 str = Convert.ToString(serialPort1.ReadByte(), 16).ToUpper();
-                // Local ID LSB
-                str = Convert.ToString(serialPort1.ReadByte(), 16).ToUpper();
-                // Pay Load Length MSB + LSB
-                str = Convert.ToString(serialPort1.ReadByte(), 16);
-                str += Convert.ToString(serialPort1.ReadByte(), 16);
-                str += Convert.ToString(serialPort1.ReadByte(), 16);
-                str = Rs232Utils.ConvertHexToString(str);
-                int payloadLength = Int32.Parse(str);
-
-                for (int i = 0; i < payloadLength; i++)
+                if (str.Equals(Rs232Utils.ByteToHex(Rs232Utils.STX)))
                 {
+                    // Local ID MSB
                     str = Convert.ToString(serialPort1.ReadByte(), 16).ToUpper();
-                    recieveSB += Rs232Utils.ConvertHexToString(str);
-                }
+                    // Local ID LSB
+                    str = Convert.ToString(serialPort1.ReadByte(), 16).ToUpper();
+                    // Pay Load Length MSB + LSB
+                    str = Convert.ToString(serialPort1.ReadByte(), 16);
+                    str += Convert.ToString(serialPort1.ReadByte(), 16);
+                    str += Convert.ToString(serialPort1.ReadByte(), 16);
+                    str = Rs232Utils.ConvertHexToString(str);
+                    int payloadLength = Int32.Parse(str);
 
-                str = Convert.ToString(serialPort1.ReadByte(), 16).ToUpper();
-                if (str.Equals(Rs232Utils.ByteToHex(Rs232Utils.ETX)))
-                {
-                    this.Invoke(new EventHandler(HandleReadData));
+                    for (int i = 0; i < payloadLength; i++)
+                    {
+                        str = Convert.ToString(serialPort1.ReadByte(), 16).ToUpper();
+                        recieveSB += Rs232Utils.ConvertHexToString(str);
+                    }
+
+                    str = Convert.ToString(serialPort1.ReadByte(), 16).ToUpper();
+                    if (str.Equals(Rs232Utils.ByteToHex(Rs232Utils.ETX)))
+                    {
+                        this.Invoke(new EventHandler(HandleReadData));
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                // 누적 데이터를 없애고
+                recieveSB = "";
+                sendCnt = 0;
             }
         }
         private void HandleReadData(object s, EventArgs e)
         {
-            // 누적된 데이터를 받고
-            string recieveData = recieveSB.ToString();
-
-            if (TesterEnviorment.DEBUG_MODE == 1)
+            try
             {
-                this.RecvTextBox.AppendText(recieveData);
-                this.RecvTextBox.AppendText("\r\n");
-            }
-            // 누적 데이터를 없애고
-            recieveSB = "";
-            sendCnt--;
+                // 누적된 데이터를 받고
+                string recieveData = recieveSB.ToString();
 
-            if (recieveData.Length <= 0)
-                return;
-
-            int payloadLength = recieveData.Length;
-            if (payloadLength % 5 != 0)
-                return;
-
-            string token = "";
-            int receivedTokencount = payloadLength / 5;
-            string[] datas = new string[TesterEnviorment.PACKET_TOKEN_COUNT];
-            if (receivedTokencount > TesterEnviorment.PACKET_TOKEN_COUNT)
-                 return;
-
-            for (int i = 0; i < receivedTokencount; i++)
-            {
-                token += recieveData[i * 5];
-                token += recieveData[i * 5 + 1];
-                token += recieveData[i * 5 + 2];
-                token += recieveData[i * 5 + 3];
-                token += recieveData[i * 5 + 4];
-
-                if (token.Equals(TesterEnviorment.STR_NNNNN))
+                if (TesterEnviorment.DEBUG_MODE == 1)
                 {
-                    datas[i] = TesterEnviorment.STR_EMPTY;
-                }
-                else
-                {
-                    datas[i] = token;
+                    this.RecvTextBox.AppendText(recieveData);
+                    this.RecvTextBox.AppendText("\r\n");
                 }
 
-                token = "";
-            }
+                // 누적 데이터를 없애고
+                recieveSB = "";
+                sendCnt = 0;
 
-            //수조온도  pH농도    염도  용존산소량   음극전위    양극전류
-            string[] row = { DateTime.Now.ToString(dateTimeEnd.CustomFormat), datas[0], datas[1]
+                if (recieveData.Length <= 0)
+                    return;
+
+                int payloadLength = recieveData.Length;
+                if (payloadLength % 5 != 0)
+                    return;
+
+                string token = "";
+                int receivedTokencount = payloadLength / 5;
+                string[] datas = new string[TesterEnviorment.PACKET_TOKEN_COUNT];
+                if (receivedTokencount > TesterEnviorment.PACKET_TOKEN_COUNT)
+                    return;
+
+                for (int i = 0; i < receivedTokencount; i++)
+                {
+                    token += recieveData[i * 5];
+                    token += recieveData[i * 5 + 1];
+                    token += recieveData[i * 5 + 2];
+                    token += recieveData[i * 5 + 3];
+                    token += recieveData[i * 5 + 4];
+
+                    if (token.Equals(TesterEnviorment.STR_NNNNN))
+                    {
+                        datas[i] = TesterEnviorment.STR_EMPTY;
+                    }
+                    else
+                    {
+                        datas[i] = token;
+                    }
+
+                    token = "";
+                }
+
+                //수조온도  pH농도    염도  용존산소량   음극전위    양극전류
+                string[] row = { DateTime.Now.ToString(dateTimeEnd.CustomFormat), datas[0], datas[1]
                                , datas[2], datas[3], datas[4], datas[5] };
 
-            SetCurrentData(row);
+                SetCurrentData(row);
 
-            if (dataGridView1.Rows.Count == 1)
-            {
-                TesterEnviorment.ConvertDateTime(row, testEnv.startTime);
+                if (dataGridView1.Rows.Count == 1)
+                {
+                    TesterEnviorment.ConvertDateTime(row, testEnv.startTime);
 
-                SetDataToUI(row);
-                SaveTofile(dataGridView1, testEnv.fileName, true);
+                    SetDataToUI(row);
+                    SaveTofile(dataGridView1, testEnv.fileName, true);
+                }
+
+                DisplayStatusbarMessage(string.Format("Serial Status: {0} RecvData: {1}", sendCnt, recieveData));
             }
-
-            DisplayStatusbarMessage(string.Format("Serial Status: {0} RecvData: {1}", sendCnt, recieveData));
+            catch (Exception ex)
+            {
+                // 누적 데이터를 없애고
+                recieveSB = "";
+                sendCnt = 0;
+            }
         }
-
         private void SetStateStartTest()
         {
             testEnv.working = true;
@@ -367,7 +396,6 @@ namespace SerialProgram
 
             SendPacket();
         }
-
         private void SetStateStopTest()
         {
             testEnv.working = false;
@@ -381,7 +409,6 @@ namespace SerialProgram
 
             AdjustBtnText();
         }
-
         private void SetStateTestSetting()
         {
             testEnv.target = textBoxTarget.Text;
@@ -394,7 +421,9 @@ namespace SerialProgram
 
             using (TesterSettingDialog tsd = new TesterSettingDialog())
             {
-                if (testEnv.EnableRunTest())
+                TesterEnviorment.eRunState runState = testEnv.EnableRunTest();
+
+                if (runState == TesterEnviorment.eRunState.SUCCESS)
                 {
                     testEnv.SaveConfig();
                     InitUIControl();
@@ -403,13 +432,12 @@ namespace SerialProgram
                 }
                 else
                 {
-                    ModalessMsgBox("설정이 올바르지 않습니다.");
+                    ModalessMsgBox(MakeStrInvalidSettingEnum(runState));
                 }
 
                 AdjustBtnText();
             }
         }
-
         private void SetStatePortSetting()
         {
             testEnv.connected = false;
@@ -464,6 +492,39 @@ namespace SerialProgram
                 }
             }
         }
+        private string MakeStrInvalidSettingEnum(TesterEnviorment.eRunState runState)
+        {
+            if (runState == TesterEnviorment.eRunState.INVALID_DELAY)
+            {
+                return "저장 간격이 너무 짧습니다.";
+            }
+            else if (runState == TesterEnviorment.eRunState.INVALID_ENDTIME)
+            {
+                return "종료 일시는 시작 일시보다 길어야 합니다.";
+            }
+            else if (runState == TesterEnviorment.eRunState.INVALID_LOCAL_VALUE)
+            {
+                return "Local value 셋팅이 안되어있습니다.";
+            }
+            else if (runState == TesterEnviorment.eRunState.INVALID_LOCALID)
+            {
+                return "Local Id 셋팅이 안되어있습니다.";
+            }
+            else if (runState == TesterEnviorment.eRunState.INVALID_TARGET)
+            {
+                return "저장 화일 이름이 없습니다.";
+            }
+            else if (runState == TesterEnviorment.eRunState.INVALID_TARGET_LENGTH)
+            {
+                return "저장 화일 이름이 너무 짧습니다.";
+            }
+            else if (runState == TesterEnviorment.eRunState.INVALID_WORKING)
+            {
+                return "기록이 진행중일때는 설정을 변경할수 없습니다.";
+            }
+
+            return "";
+        }
         private void UpdateTestEnv()
         {
             testEnv.delay = textBoxDelay.Text != "" ? Convert.ToInt32(textBoxDelay.Text) : 1;
@@ -472,8 +533,6 @@ namespace SerialProgram
 
             testEnv.SaveConfig();
         }
-
-        //데이터를 보내기
         private void btnStart_Click(object sender, EventArgs e)
         {
             if (testEnv.working == false)
@@ -484,10 +543,12 @@ namespace SerialProgram
 
                 bool bContinue = preFileName.Equals(curFileName);
 
-                if (testEnv.connected && bContinue && testEnv.EnableRunTest())
+                TesterEnviorment.eRunState runState = testEnv.EnableRunTest();
+
+                if (testEnv.connected && bContinue && runState == TesterEnviorment.eRunState.SUCCESS)
                 {
                     DialogResult ret = MessageBox.Show("이전 테스트가 완료되지 못했습니다. 이어하시겠습니까?"
-                        , "이어하기", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                        , "이어하기", MessageBoxButtons.YesNo);
                     if (ret == DialogResult.Yes)
                     {
                         try
@@ -533,21 +594,33 @@ namespace SerialProgram
                 if (testEnv.working)
                 {
                     if (MessageBox.Show("기록을 종료하시겠습니까?"
-                        , "기록 종료", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+                        , "기록 종료", MessageBoxButtons.YesNo)
                         == DialogResult.Yes)
                     {
                         SaveTofile(dataGridView1, testEnv.completedFilePath, false);
 
                         SetStateStopTest();
+
+                        testEnv.target = "";
+                        testEnv.delay = 1;
+                        testEnv.endTime = DateTime.Now.AddDays(1);
+                        testEnv.startTime = DateTime.Now;
+
+                        textBoxTarget.Text = testEnv.target;
+                        textBoxDelay.Text = testEnv.delay.ToString();
+                        dateTimeEnd.Value = testEnv.endTime;
+                        textBoxStartTime.Text = testEnv.startTime.ToString(TesterEnviorment.DATETIME_FORMAT);
                     }
 
                     return;
                 }
-                
-                if (testEnv.EnableRunTest())
+
+                TesterEnviorment.eRunState runState = testEnv.EnableRunTest();
+
+                if (runState == TesterEnviorment.eRunState.SUCCESS)
                 {
                     if (MessageBox.Show("기록을 시작하시겠습니까?"
-                        , "기록 시작", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+                        , "기록 시작", MessageBoxButtons.YesNo)
                         == DialogResult.Yes)
                     {
                         InitUIControl();
@@ -564,7 +637,7 @@ namespace SerialProgram
                 }
                 else
                 {
-                    MessageBox.Show("기록 설정이 잘못 되었습니다.");
+                    MessageBox.Show(MakeStrInvalidSettingEnum(runState));
                     return;
                 }
             }
@@ -577,7 +650,7 @@ namespace SerialProgram
                 else
                 {
                     if (MessageBox.Show("기록을 종료하시겠습니까?"
-                        , "기록 종료", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+                        , "기록 종료", MessageBoxButtons.YesNo)
                         == DialogResult.Yes)
                     {
                         SetStateStopTest();
@@ -611,14 +684,13 @@ namespace SerialProgram
                 }
             }
         }
-
         private void Form1_Load(object sender, EventArgs e)
         {
             PreventMonitorPowerdown();
         }
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (MessageBox.Show("정말 종료하시겠습니까?", "Exit",
+            if (MessageBox.Show("종료하시겠습니까?", "종료",
                 MessageBoxButtons.YesNo) == DialogResult.No)
             {
                 e.Cancel = true;
@@ -727,11 +799,14 @@ namespace SerialProgram
         }
         void OnTimeSaveToFile(object sender, EventArgs e)
         {
-            string[] dump = (string[])preRecvData.Clone();
-            TesterEnviorment.ConvertDateTime(dump, testEnv.startTime);
+            if (preRecvData != null)
+            {
+                string[] dump = (string[])preRecvData.Clone();
+                TesterEnviorment.ConvertDateTime(dump, testEnv.startTime);
 
-            SetDataToUI(dump);
-            SaveTofile(dataGridView1, testEnv.fileName, true);
+                SetDataToUI(dump);
+                SaveTofile(dataGridView1, testEnv.fileName, true);
+            }
         }
         void OnTimeSendPacket(object sender, EventArgs e)
         {
@@ -770,8 +845,6 @@ namespace SerialProgram
                     preRecvData[0] = DateTime.Now.ToString(dateTimeEnd.CustomFormat);
                     textBoxData_Time.Text = preRecvData[0].ToString();
                 }
-
-                return;
             }
 
             SendPacket();
@@ -815,8 +888,6 @@ namespace SerialProgram
             }
 
             DisplayStatusbarMessage(string.Format("Serial Status: {0} Send Data: {1}", sendCnt, Rs232Utils.ByteArrayToHexString(buffer) ));
-
-            SendTextBox.Text += Rs232Utils.ByteArrayToHexString(buffer) + "\r\n";
         }
 
         public void LoadFromFile()
@@ -874,7 +945,6 @@ namespace SerialProgram
         {
             new Thread(() => { MessageBox.Show(new Form() { TopMost = true }, msg); }).Start();
         }
-        
         private void printDocument1_PrintPage(object sender,
         System.Drawing.Printing.PrintPageEventArgs e)
         {
