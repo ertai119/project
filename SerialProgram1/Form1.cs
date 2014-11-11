@@ -848,9 +848,6 @@ namespace SerialProgram
         {
             sendCnt++;
 
-            if (serialPort1.IsOpen == false)
-                return;
-
             if (TesterEnviorment.DEBUG_MODE == 1)
             {
                 //수조온도  pH농도    염도  용존산소량   음극전위    양극전류
@@ -879,9 +876,18 @@ namespace SerialProgram
             // End Byte
             buffer[3] = Rs232Utils.ETX;
 
-            if (TesterEnviorment.DEBUG_MODE != 1)
+            try
             {
-                serialPort1.Write(buffer, 0, buffer.Length);
+                if (TesterEnviorment.DEBUG_MODE != 1)
+                {
+                    if (serialPort1.IsOpen)
+                    {
+                        serialPort1.Write(buffer, 0, buffer.Length);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
             }
 
             DisplayStatusbarMessage(string.Format("Serial Status: {0} Send Data: {1}", sendCnt, Rs232Utils.ByteArrayToHexString(buffer) ));
