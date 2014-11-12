@@ -94,7 +94,7 @@ namespace SerialProgram
                             fileDataList.Add(row);
                         }
 
-                        for (int idx = fileDataList.Count - 1; idx >= 0; idx--)
+                        for (int idx = 0 ; idx < fileDataList.Count; idx++)
                         {
                             SetDataFromFile(fileDataList[idx]);
                         }
@@ -125,7 +125,7 @@ namespace SerialProgram
             if (data == null)
                 return;
 
-            dataGridView1.Rows.Insert(0, data);
+            dataGridView1.Rows.Add(data);
 
             string EMPTY = TesterEnviorment.STR_EMPTY;
 

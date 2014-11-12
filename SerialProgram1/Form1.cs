@@ -764,34 +764,40 @@ namespace SerialProgram
                     swOut.WriteLine();
 
                     //write DataGridView rows to csv
-                    for (int j = 0; j <= myDataGridView.Rows.Count - 1; j++)
+                    int totalRowCount = myDataGridView.Rows.Count;
+                    if (totalRowCount > 0)
                     {
-                        if (j > 0)
+                        for (int j = totalRowCount - 1 ; j >= 0; j--)
                         {
-                            swOut.WriteLine();
-                        }
+                            dr = myDataGridView.Rows[j];
 
-                        dr = myDataGridView.Rows[j];
-
-                        for (int i = 0; i <= myDataGridView.Columns.Count - 1; i++)
-                        {
-                            if (dr.Cells[i].Value == null)
-                                continue;
-
-                            if (i > 0)
+                            bool isWrite = false;
+                            for (int i = 0; i <= myDataGridView.Columns.Count - 1; i++)
                             {
-                                swOut.Write(",");
+                                if (dr.Cells[i].Value == null)
+                                    continue;
+
+                                if (i > 0)
+                                {
+                                    swOut.Write(",");
+                                }
+
+                                value = dr.Cells[i].Value.ToString();
+                                //replace comma's with spaces
+                                value = value.Replace(',', ' ');
+                                //replace embedded newlines with spaces
+                                value = value.Replace(Environment.NewLine, " ");
+
+                                swOut.Write(value);
+
+                                isWrite = true;
                             }
 
-                            value = dr.Cells[i].Value.ToString();
-                            //replace comma's with spaces
-                            value = value.Replace(',', ' ');
-                            //replace embedded newlines with spaces
-                            value = value.Replace(Environment.NewLine, " ");
-
-                            swOut.Write(value);
+                            if (isWrite)
+                                swOut.WriteLine();
                         }
                     }
+                    
                     swOut.Close();
                     fStream.Close();
                 }
@@ -923,7 +929,7 @@ namespace SerialProgram
                     fileDataList.Add(row);
                 }
 
-                for(int idx = fileDataList.Count - 1; idx >= 0 ; idx--)
+                for(int idx = 0 ; idx < fileDataList.Count ; idx++)
                 {
                     SetDataToUI(fileDataList[idx]);
                 }
